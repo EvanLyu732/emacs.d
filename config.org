@@ -4,14 +4,78 @@
 #+STARTUP: showeverything
 #+OPTIONS: tocs:2
 
+* Table Of Content :toc:
+- [[#basic-setting][Basic Setting]]
+  - [[#basic-config][Basic Config]]
+  - [[#zoom-inout][Zoom In/Out]]
+- [[#custom-function][Custom Function]]
+- [[#packages][Packages]]
+  - [[#using-emacs-china-package-source][Using Emacs China Package Source]]
+  - [[#elpaca-package-manager][Elpaca Package Manager]]
+  - [[#evil-mode][Evil Mode]]
+  - [[#monokai-theme][Monokai Theme]]
+  - [[#org-package][Org Package]]
+  - [[#general-config][General Config]]
+  - [[#which-key][Which Key]]
 
-* Important Config
-** Using Proxy
-#+BEGIN_SRC emacs-lisp
-(setq url-proxy-services
-      '(("http" . "127.0.0.1:7890")
-        ("https" . "127.0.0.1:7890")))
-#+END_SRC
+* Basic Setting 
+  
+  
+** Basic Config
+#+begin_src emacs-lisp
+(setq inhibit-startup-message t)
+
+;; disable tool bar menu bar scroll bar
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; highlight current line
+(global-hl-line-mode t)
+
+;; show line number
+(line-number-mode t)
+
+;; auto refresh when configure is updated
+(global-auto-revert-mode t)
+
+;; line number mode
+(global-display-line-numbers-mode 1)
+(global-visual-line-mode t)
+
+#+end_src
+
+** Zoom In/Out
+  
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+
+#+end_src
+
+* Custom Function
+  
+#+begin_src emacs-lisp
+
+;; reload configuration
+(defun reload-init-file ()
+  (interactive)
+  (load-file user-init-file)
+  (load-file user-init-file)
+)
+#+end_src
+
+
+* Packages
+  
+** Using Emacs China Package Source 
+   #+begin_src emacs-lisp
+(setq package-archives '(("gnu"   . "http://1.15.88.122/gnu/")
+                           ("melpa" . "http://1.15.88.122/melpa/")))
+   #+end_src
+   
 
 
 ** Elpaca Package Manager
@@ -93,14 +157,14 @@
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
     (setq evil-vsplit-window-right t)
-    (setq evil-split-window-below t)
+
+(setq evil-split-window-below t)
     :ensure t
     :demand nil
     :config
     (evil-mode)
     (setq x-select-enable-clipboard nil)
 )
-
 (use-package evil-collection
     :after evil
     :ensure t
@@ -108,6 +172,13 @@
     :config
     (setq evil-collection-mode-list '(dashboard dired ibuffer))
     (evil-collection-init))
+
+(use-package evil-commentary
+    :after evil
+    :ensure t
+    :demand nil 
+    :config
+    (evil-commentary-mode))
 
 (use-package evil-surround
     :after evil
@@ -128,55 +199,52 @@
 )
 #+END_SRC
 
-** Basic Setting
+   
+** Org Package
+
+*** Tables Of Contents
+#+begin_src emacs-lisp
+(use-package toc-org
+    :ensure t
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))
+#+end_src
+   
+*** Org Modern Mode
 #+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-message t)
-;; disable tool bar menu bar scroll bar
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-
-;; highlight current line
-(global-hl-line-mode t)
-
-;; show line number
-(line-number-mode t)
-
-;; auto refresh when configure is updated
-(global-auto-revert-mode t)
-
-;; line number mode
-(global-display-line-numbers-mode)
+(use-package org-modern 
+    :ensure t 
+    :config 
+(add-hook 'org-mode-hook 'org-modern-mode))
 #+END_SRC
+
+*** Org Tempo
+   #+begin_src emacs-lisp
+(require 'org-tempo)
+   #+end_src
    
 
 ** General Config
 
+   
+** Which Key
+   #+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :init
+    (which-key-mode 1)
+  :config
+  (setq which-key-side-window-location 'bottom
+	  which-key-sort-order #'which-key-key-order-alpha
+	  which-key-sort-uppercase-first nil
+	  which-key-add-column-padding 1
+	  which-key-max-display-columns nil
+	  which-key-min-display-lines 6
+	  which-key-side-window-slot -10
+	  which-key-side-window-max-height 0.25
+	  which-key-idle-delay 0.8
+	  which-key-max-description-length 25
+	  which-key-allow-imprecise-window-fit t
+	  which-key-separator " → " ))
+   #+end_src
 
-# ;; (unless (package-installed-p 'simpleclip)
-# ;;   (package-install 'simpleclip)
-# ;; )
-
-# ;; (unless (package-installed-p 'slime)
-# ;;   (package-install 'slime)
-# ;; )
-
-
-# ;; ;;(unless (package-installed-p 'sly)
-# ;; ;; (package-install 'sly)
-# ;; ;;)
-
-# ;; (unless (package-installed-p 'company)
-# ;;   (package-install 'company)
-# ;; )
-
-# ;; ;; copy and paste
-# ;; (require 'simpleclip)
-# ;; (simpleclip-mode 1)
-
-
-# ;; ;; company-mode for autocomplte
-# ;; (add-hook 'after-init-hook 'global-company-mode)
-
-# ;; ;; slime for common-lisp
-# ;; (require 'slime)
