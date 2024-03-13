@@ -1,12 +1,14 @@
 #+TITLE: Evan's Config Org File
 #+AUTHOR: Evan Lyu
+#+auto_tangle: t
 #+DESCRIPTION: Evan's Config Org File
 #+STARTUP: showeverything
-#+OPTIONS: tocs:2
+#+OPTIONS: tocs:3
 
-* Table Of Content :toc:
+* Table Of Content :TOC_3:
 - [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
+  - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
 - [[#custom-function][Custom Function]]
 - [[#packages][Packages]]
@@ -15,11 +17,33 @@
   - [[#evil-mode][Evil Mode]]
   - [[#monokai-theme][Monokai Theme]]
   - [[#org-package][Org Package]]
+    - [[#org-mode-basic-settings][Org Mode Basic Settings]]
+    - [[#tables-of-contents][Tables Of Contents]]
+    - [[#org-modern-mode][Org Modern Mode]]
+    - [[#org-tempo][Org Tempo]]
+    - [[#org-auto-tangle][Org Auto Tangle]]
   - [[#general-config][General Config]]
+  - [[#focus][Focus]]
+  - [[#magit][Magit]]
+  - [[#rainbow-bracket][Rainbow-Bracket]]
+  - [[#rainbow-delimters][Rainbow-Delimters]]
+  - [[#highlight-todo][Highlight-TODO]]
+  - [[#icons][Icons]]
+  - [[#treemacs][TreeMacs]]
+  - [[#bughunter][BugHunter]]
+  - [[#modeline][Modeline]]
   - [[#which-key][Which Key]]
+  - [[#dashboard][Dashboard]]
+  - [[#minibuffer][Minibuffer]]
+    - [[#vertico][Vertico]]
+    - [[#marginalia][MARGINALIA]]
+  - [[#fly-check][Fly Check]]
+  - [[#completion][Completion]]
+    - [[#coruf][Coruf]]
 
 * Basic Setting 
-  
+
+First of all, remap <Ctrl> to <CapsLock> manuall.
   
 ** Basic Config
 #+begin_src emacs-lisp
@@ -43,6 +67,41 @@
 (global-display-line-numbers-mode 1)
 (global-visual-line-mode t)
 
+;; backup files
+(setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
+
+#+end_src
+
+** Font
+
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil
+  :font "JetBrainsMono Nerd Font"
+  :height 110
+  :weight 'medium)
+(set-face-attribute 'variable-pitch nil
+  :font "Ubuntu"
+  :height 120
+  :weight 'medium)
+(set-face-attribute 'fixed-pitch nil
+  :font "JetBrainsMono Nerd Font"
+  :height 110
+  :weight 'medium)
+;; Makes commented text and keywords italics.
+;; This is working in emacsclient but not emacs.
+;; Your font must have an italic face available.
+(set-face-attribute 'font-lock-comment-face nil
+  :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+  :slant 'italic)
+
+;; This sets the default font on all graphical frames created after restarting Emacs.
+;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
+;; are not right unless I also add this method of setting the default font.
+(add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
+
+;; Uncomment the following line if line spacing needs adjusting.
+(setq-default line-spacing 0.12)
 #+end_src
 
 ** Zoom In/Out
@@ -202,6 +261,25 @@
    
 ** Org Package
 
+*** Org Mode Basic Settings
+#+begin_src emacs-lisp
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (setq org-directory "~/Org/"
+        org-agenda-files '("~/Org/agenda.org")
+        org-default-notes-file (expand-file-name "notes.org" org-directory)
+        org-ellipsis " ▼ "
+        org-log-done 'time
+        org-journal-dir "~/Org/journal/"
+        org-journal-date-format "%B %d, %Y (%A) "
+        org-journal-file-format "%Y-%m-%d.org"
+        org-hide-emphasis-markers t)
+(setq org-src-preserve-indentation nil
+      org-src-tab-acts-natively t
+      org-edit-src-content-indentation 0
+      org-src-fontify-natively t
+      org-confirm-babel-evaluate nil)
+#+end_src
+
 *** Tables Of Contents
 #+begin_src emacs-lisp
 (use-package toc-org
@@ -213,20 +291,169 @@
 *** Org Modern Mode
 #+BEGIN_SRC emacs-lisp
 (use-package org-modern 
-    :ensure t 
-    :config 
-(add-hook 'org-mode-hook 'org-modern-mode))
+	  :ensure t 
+	  :config 
+      (add-hook 'org-mode-hook 'org-modern-mode)
+)
+
 #+END_SRC
 
 *** Org Tempo
    #+begin_src emacs-lisp
 (require 'org-tempo)
    #+end_src
+
+
+
+*** Org Auto Tangle
+
+#+begin_src emacs-lisp
+(use-package org-auto-tangle
+:defer t
+:hook (org-mode . org-auto-tangle-mode))
+#+end_src
    
 
 ** General Config
 
-   
+#+begin_src emacs-lisp
+(use-package general
+  :ensure t
+  :config
+  (general-evil-setup)
+  
+  ;; set up 'SPC' as the global leader key
+  (general-create-definer leader-key
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC" ;; set leader
+    :global-prefix "M-SPC") ;; access leader in insert mode
+
+  (leader-key
+    "b" '(:ignore t :wk "Bookmarks/Buffers")
+    "b b" '(switch-to-buffer :wk "Switch to buffer")
+    "b c" '(clone-indirect-buffer :wk "Create indirect buffer copy in a split")
+    "b C" '(clone-indirect-buffer-other-window :wk "Clone indirect buffer in new window")
+    "b d" '(bookmark-delete :wk "Delete bookmark")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-current-buffer :wk "Kill current buffer")
+    "b K" '(kill-some-buffers :wk "Kill multiple buffers")
+    "b l" '(list-bookmarks :wk "List bookmarks")
+    "b m" '(bookmark-set :wk "Set bookmark")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer")
+    "b R" '(rename-buffer :wk "Rename buffer")
+    "b s" '(basic-save-buffer :wk "Save buffer")
+    "b S" '(save-some-buffers :wk "Save multiple buffers")
+    )
+
+  (leader-key
+    "e" '(treemacs :wk "Open TreeMacs")
+   )
+)
+#+end_src
+
+
+
+** Focus
+#+begin_src emacs-lisp
+(use-package focus :ensure t)
+#+end_src
+
+
+** Magit
+#+begin_src emacs-lisp
+(use-package magit :ensure t)
+#+end_src
+
+** Rainbow-Bracket
+#+begin_src emacs-lisp
+(use-package rainbow-mode :ensure t :hook org-mode prog-mode)
+#+end_src
+
+** Rainbow-Delimters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+  :ensure t
+  :hook ((org-mode . rainbow-delimiters-mode)
+	 (prog-mode . rainbow-delimiters-mode)))
+
+#+end_src
+
+
+** Highlight-TODO
+#+begin_src emacs-lisp
+  (use-package hl-todo
+    :ensure t
+    :hook ((org-mode . hl-todo-mode)
+	   (prog-mode . hl-todo-mode))
+    :config
+    (setq hl-todo-highlight-punctuation ":"
+	  hl-todo-keyword-faces
+	  `(("TODO"       warning bold)
+	    ("FIXME"      error bold)
+	    ("HACK"       font-lock-constant-face bold)
+	    ("REVIEW"     font-lock-keyword-face bold)
+	    ("NOTE"       success bold)
+	    ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+
+
+** Icons
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+	:ensure t
+	:if (display-graphic-p))
+
+  (use-package all-the-icons-dired
+  :ensure t
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+end_src
+
+
+** TreeMacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+  :ensure t
+  :defer t)
+
+  (use-package treemacs-icons-dired
+  :ensure t
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  )
+
+  (use-package treemacs-persp
+  :after (treemacs persp-mode)
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
+
+#+end_src
+
+** BugHunter
+bug hunter for hunting emacs configuration file 
+
+#+begin_src emacs-lisp
+  (use-package bug-hunter
+  :ensure t
+  )
+#+end_src
+
+** Modeline
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-height 35      ;; sets modeline height
+        doom-modeline-bar-width 5    ;; sets right bar width
+        doom-modeline-persp-name t   ;; adds perspective name to modeline
+        doom-modeline-persp-icon t)) ;; adds folder icon next to persp name
+#+end_src
+
+
 ** Which Key
    #+begin_src emacs-lisp
 (use-package which-key
@@ -247,4 +474,125 @@
 	  which-key-allow-imprecise-window-fit t
 	  which-key-separator " → " ))
    #+end_src
+
+** Dashboard 
+
+#+begin_src emacs-lisp
+;;install dashboard
+(use-package dashboard
+   :ensure t
+   :init
+ (setq dashboard-set-heading-icons t)
+ (setq dashboard-set-file-icons t)
+ (setq dashboard-banner-logo-title "emacs rocks")
+ (setq dashboard-startup-banner 'logo)
+ (setq dashboard-center-content nil)
+ (setq dashboard-items '((recents . 5)
+                         (projects . 3)
+                         (agenda . 3)))
+                        
+ :config
+(dashboard-setup-startup-hook)
+)
+
+#+end_src
+
+** Minibuffer
+
+*** Vertico
+
+#+begin_src emacs-lisp
+;;install vertico
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
+  ;; Different scroll margin
+  ;; (setq vertico-scroll-margin 0)
+  ;; Show more candidates
+  (setq vertico-count 20)
+  ;; Grow and shrink the Vertico minibuffer
+  (setq vertico-resize t)
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  (setq vertico-cycle t))
+#+end_src
+
+
+*** MARGINALIA
+
+#+begin_src emacs-lisp
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :ensure t
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be actived in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
+#+end_src
+
+** Fly Check
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t)
+#+end_src
+
+** Completion
+
+
+
+*** Coruf
+
+Coruf for completion UI
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure t
+  ;; Optional customizations
+  ;; :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+  ;; Enable Corfu only for certain modes.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :ensure t
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  ;; (setq read-extended-command-predicate
+  ;;       #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+#+end_src
 

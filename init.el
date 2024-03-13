@@ -9,8 +9,7 @@
 
 ;; ;; disable tool bar menu bar scroll bar
 ;; (tool-bar-mode -1)
-;; (menu-bar-mode -1)
-;; (scroll-bar-mode -1)
+;; (menu-bar-mode -1) ;; (scroll-bar-mode -1)
 
 ;; ;; highlight current line
 ;; (global-hl-line-mode t)
@@ -95,7 +94,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
- '(package-selected-packages '(org-bullets ## org-modern slime cmake-mode compat)))
+ '(package-selected-packages '(magit org-bullets ## org-modern slime cmake-mode compat)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
