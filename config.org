@@ -8,6 +8,7 @@
 * Table Of Content :TOC_3:
 - [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
+  - [[#chinese-input][Chinese Input]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
 - [[#custom-function][Custom Function]]
@@ -15,15 +16,22 @@
   - [[#using-emacs-china-package-source][Using Emacs China Package Source]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
   - [[#evil-mode][Evil Mode]]
-  - [[#monokai-theme][Monokai Theme]]
+  - [[#theme][Theme]]
+    - [[#doom-theme][Doom Theme]]
   - [[#org-package][Org Package]]
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
     - [[#tables-of-contents][Tables Of Contents]]
-    - [[#org-modern-mode][Org Modern Mode]]
+    - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
     - [[#org-auto-tangle][Org Auto Tangle]]
+    - [[#org-roam][Org Roam]]
   - [[#general-config][General Config]]
-  - [[#focus][Focus]]
+  - [[#focus-mode][Focus Mode]]
+    - [[#focus][Focus]]
+    - [[#dimmer][Dimmer]]
+    - [[#darkroom][DarkRoom]]
+  - [[#indentation][Indentation]]
+    - [[#aggressive-indent][aggressive-indent]]
   - [[#magit][Magit]]
   - [[#rainbow-bracket][Rainbow-Bracket]]
   - [[#rainbow-delimters][Rainbow-Delimters]]
@@ -40,6 +48,17 @@
   - [[#fly-check][Fly Check]]
   - [[#completion][Completion]]
     - [[#coruf][Coruf]]
+  - [[#development][Development]]
+    - [[#eglot][Eglot]]
+    - [[#cpp][Cpp]]
+    - [[#common-lisp][Common Lisp]]
+    - [[#shell][Shell]]
+    - [[#debug][Debug]]
+  - [[#eaf][EAF]]
+  - [[#terminal][Terminal]]
+    - [[#vterm][VTerm]]
+  - [[#window-manager][Window Manager]]
+    - [[#exwm][EXWM]]
 
 * Basic Setting 
 
@@ -72,28 +91,34 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
 #+end_src
 
+** Chinese Input
+
+#+begin_src emacs-lisp
+
+#+end_src
+
 ** Font
 
 #+begin_src emacs-lisp
 (set-face-attribute 'default nil
-  :font "JetBrainsMono Nerd Font"
-  :height 110
-  :weight 'medium)
+		    :font "JetBrainsMono Nerd Font"
+		    :height 110
+		    :weight 'medium)
 (set-face-attribute 'variable-pitch nil
-  :font "Ubuntu"
-  :height 120
-  :weight 'medium)
+		    :font "Ubuntu"
+		    :height 120
+		    :weight 'medium)
 (set-face-attribute 'fixed-pitch nil
-  :font "JetBrainsMono Nerd Font"
-  :height 110
-  :weight 'medium)
+		    :font "JetBrainsMono Nerd Font"
+		    :height 110
+		    :weight 'medium)
 ;; Makes commented text and keywords italics.
 ;; This is working in emacsclient but not emacs.
 ;; Your font must have an italic face available.
 (set-face-attribute 'font-lock-comment-face nil
-  :slant 'italic)
+		    :slant 'italic)
 (set-face-attribute 'font-lock-keyword-face nil
-  :slant 'italic)
+		    :slant 'italic)
 
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
@@ -117,23 +142,22 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 * Custom Function
   
 #+begin_src emacs-lisp
-
 ;; reload configuration
 (defun reload-init-file ()
   (interactive)
   (load-file user-init-file)
   (load-file user-init-file)
-)
+  )
 #+end_src
 
 
 * Packages
   
 ** Using Emacs China Package Source 
-   #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setq package-archives '(("gnu"   . "http://1.15.88.122/gnu/")
-                           ("melpa" . "http://1.15.88.122/melpa/")))
-   #+end_src
+			 ("melpa" . "http://1.15.88.122/melpa/")))
+#+end_src
    
 
 
@@ -212,50 +236,65 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 #+BEGIN_SRC emacs-lisp
 ;; Expands to: (elpaca evil (use-package evil :demand t))
 (use-package evil 
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    (setq evil-vsplit-window-right t)
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
 
-(setq evil-split-window-below t)
-    :ensure t
-    :demand nil
-    :config
-    (evil-mode)
-    (setq x-select-enable-clipboard nil)
-)
+  (setq evil-split-window-below t)
+  :ensure t
+  :demand nil
+  :config
+  (evil-mode)
+  (setq x-select-enable-clipboard nil)
+  )
 (use-package evil-collection
-    :after evil
-    :ensure t
-    :demand nil 
-    :config
-    (setq evil-collection-mode-list '(dashboard dired ibuffer))
-    (evil-collection-init))
+  :after evil
+  :ensure t
+  :demand nil 
+  :config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init))
 
 (use-package evil-commentary
-    :after evil
-    :ensure t
-    :demand nil 
-    :config
-    (evil-commentary-mode))
+  :after evil
+  :ensure t
+  :demand nil 
+  :config
+  (evil-commentary-mode))
 
 (use-package evil-surround
-    :after evil
-    :ensure t
-    :demand nil 
-    :config
-    (global-evil-surround-mode))
+  :after evil
+  :ensure t
+  :demand nil 
+  :config
+  (global-evil-surround-mode))
 
 (elpaca-wait)
 #+END_SRC
 
-** Monokai Theme 
+** Theme
+
+*** Doom Theme 
 #+BEGIN_SRC emacs-lisp
-(use-package monokai-theme 
-    :ensure t
-    :config
-    (load-theme 'monokai t)
-)
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-molokai t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
 #+END_SRC
 
    
@@ -263,16 +302,16 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
 *** Org Mode Basic Settings
 #+begin_src emacs-lisp
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  (setq org-directory "~/Org/"
-        org-agenda-files '("~/Org/agenda.org")
-        org-default-notes-file (expand-file-name "notes.org" org-directory)
-        org-ellipsis " ▼ "
-        org-log-done 'time
-        org-journal-dir "~/Org/journal/"
-        org-journal-date-format "%B %d, %Y (%A) "
-        org-journal-file-format "%Y-%m-%d.org"
-        org-hide-emphasis-markers t)
+(add-hook 'org-mode-hook 'org-indent-mode)
+(setq org-directory "~/Org/"
+      org-agenda-files '("~/Org/agenda.org")
+      org-default-notes-file (expand-file-name "notes.org" org-directory)
+      org-ellipsis " ▼ "
+      org-log-done 'time
+      org-journal-dir "~/Org/journal/"
+      org-journal-date-format "%B %d, %Y (%A) "
+      org-journal-file-format "%Y-%m-%d.org"
+      org-hide-emphasis-markers t)
 (setq org-src-preserve-indentation nil
       org-src-tab-acts-natively t
       org-edit-src-content-indentation 0
@@ -283,34 +322,52 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 *** Tables Of Contents
 #+begin_src emacs-lisp
 (use-package toc-org
-    :ensure t
-    :commands toc-org-enable
-    :init (add-hook 'org-mode-hook 'toc-org-enable))
+  :ensure t
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
    
-*** Org Modern Mode
-#+BEGIN_SRC emacs-lisp
-(use-package org-modern 
-	  :ensure t 
-	  :config 
-      (add-hook 'org-mode-hook 'org-modern-mode)
-)
-
+*** Org Bullet
+#+begin_src emacs-lisp
+(use-package org-bullets :ensure t :config 
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
 *** Org Tempo
-   #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (require 'org-tempo)
-   #+end_src
-
+#+end_src
 
 
 *** Org Auto Tangle
 
 #+begin_src emacs-lisp
 (use-package org-auto-tangle
-:defer t
-:hook (org-mode . org-auto-tangle-mode))
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+
+*** Org Roam
+
+org roam for note-taking
+#+begin_src emacs-lisp
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/Org/"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
 #+end_src
    
 
@@ -350,21 +407,59 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
   (leader-key
     "e" '(treemacs :wk "Open TreeMacs")
-   )
-)
+    )
+
+  (leader-key
+    "z" '(darkroom-mode :wk "Zen Mode")
+    )
+  )
 #+end_src
 
 
+** Focus Mode
 
-** Focus
+*** Focus 
+
 #+begin_src emacs-lisp
 (use-package focus :ensure t)
+#+end_src
+
+*** Dimmer
+
+#+begin_src emacs-lisp
+(use-package dimmer :ensure t :config 
+  (dimmer-configure-which-key)
+  (dimmer-configure-helm)
+  (dimmer-mode t))
+#+end_src
+
+*** DarkRoom
+
+DarkRoom for Zen Mode
+
+#+begin_src emacs-lisp
+(use-package darkroom :ensure t)
+#+end_src
+
+** Indentation
+
+*** aggressive-indent
+
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  :ensure t
+  :config
+  ;;(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+  (global-aggressive-indent-mode 1)
+
+  )
 #+end_src
 
 
 ** Magit
 #+begin_src emacs-lisp
-(use-package magit :ensure t)
+(use-package transient :ensure t)
+(use-package magit :ensure t :after transient)
 #+end_src
 
 ** Rainbow-Bracket
@@ -374,7 +469,7 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
 ** Rainbow-Delimters
 #+begin_src emacs-lisp
-  (use-package rainbow-delimiters
+(use-package rainbow-delimiters
   :ensure t
   :hook ((org-mode . rainbow-delimiters-mode)
 	 (prog-mode . rainbow-delimiters-mode)))
@@ -384,30 +479,30 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
 ** Highlight-TODO
 #+begin_src emacs-lisp
-  (use-package hl-todo
-    :ensure t
-    :hook ((org-mode . hl-todo-mode)
-	   (prog-mode . hl-todo-mode))
-    :config
-    (setq hl-todo-highlight-punctuation ":"
-	  hl-todo-keyword-faces
-	  `(("TODO"       warning bold)
-	    ("FIXME"      error bold)
-	    ("HACK"       font-lock-constant-face bold)
-	    ("REVIEW"     font-lock-keyword-face bold)
-	    ("NOTE"       success bold)
-	    ("DEPRECATED" font-lock-doc-face bold))))
+(use-package hl-todo
+  :ensure t
+  :hook ((org-mode . hl-todo-mode)
+	 (prog-mode . hl-todo-mode))
+  :config
+  (setq hl-todo-highlight-punctuation ":"
+	hl-todo-keyword-faces
+	`(("TODO"       warning bold)
+	  ("FIXME"      error bold)
+	  ("HACK"       font-lock-constant-face bold)
+	  ("REVIEW"     font-lock-keyword-face bold)
+	  ("NOTE"       success bold)
+	  ("DEPRECATED" font-lock-doc-face bold))))
 #+end_src
 
 
 ** Icons
 
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-	:ensure t
-	:if (display-graphic-p))
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
 
-  (use-package all-the-icons-dired
+(use-package all-the-icons-dired
   :ensure t
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
@@ -415,16 +510,16 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 
 ** TreeMacs
 #+begin_src emacs-lisp
-  (use-package treemacs
+(use-package treemacs
   :ensure t
   :defer t)
 
-  (use-package treemacs-icons-dired
+(use-package treemacs-icons-dired
   :ensure t
   :hook (dired-mode . treemacs-icons-dired-enable-once)
   )
 
-  (use-package treemacs-persp
+(use-package treemacs-persp
   :after (treemacs persp-mode)
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
@@ -435,7 +530,7 @@ First of all, remap <Ctrl> to <CapsLock> manuall.
 bug hunter for hunting emacs configuration file 
 
 #+begin_src emacs-lisp
-  (use-package bug-hunter
+(use-package bug-hunter
   :ensure t
   )
 #+end_src
@@ -455,45 +550,45 @@ bug hunter for hunting emacs configuration file
 
 
 ** Which Key
-   #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (use-package which-key
   :ensure t
   :init
-    (which-key-mode 1)
+  (which-key-mode 1)
   :config
   (setq which-key-side-window-location 'bottom
-	  which-key-sort-order #'which-key-key-order-alpha
-	  which-key-sort-uppercase-first nil
-	  which-key-add-column-padding 1
-	  which-key-max-display-columns nil
-	  which-key-min-display-lines 6
-	  which-key-side-window-slot -10
-	  which-key-side-window-max-height 0.25
-	  which-key-idle-delay 0.8
-	  which-key-max-description-length 25
-	  which-key-allow-imprecise-window-fit t
-	  which-key-separator " → " ))
-   #+end_src
+	which-key-sort-order #'which-key-key-order-alpha
+	which-key-sort-uppercase-first nil
+	which-key-add-column-padding 1
+	which-key-max-display-columns nil
+	which-key-min-display-lines 6
+	which-key-side-window-slot -10
+	which-key-side-window-max-height 0.25
+	which-key-idle-delay 0.8
+	which-key-max-description-length 25
+	which-key-allow-imprecise-window-fit t
+	which-key-separator " → " ))
+#+end_src
 
 ** Dashboard 
 
 #+begin_src emacs-lisp
 ;;install dashboard
 (use-package dashboard
-   :ensure t
-   :init
- (setq dashboard-set-heading-icons t)
- (setq dashboard-set-file-icons t)
- (setq dashboard-banner-logo-title "emacs rocks")
- (setq dashboard-startup-banner 'logo)
- (setq dashboard-center-content nil)
- (setq dashboard-items '((recents . 5)
-                         (projects . 3)
-                         (agenda . 3)))
-                        
- :config
-(dashboard-setup-startup-hook)
-)
+  :ensure t
+  :init
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "emacs rocks")
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-center-content nil)
+  (setq dashboard-items '((recents . 5)
+                          (projects . 3)
+                          (agenda . 3)))
+  
+  :config
+  (dashboard-setup-startup-hook)
+  )
 
 #+end_src
 
@@ -528,7 +623,7 @@ bug hunter for hunting emacs configuration file
   ;; `completion-list-mode-map'.
   :ensure t
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
 
   ;; The :init section is always executed.
   :init
@@ -543,32 +638,42 @@ bug hunter for hunting emacs configuration file
 
 #+begin_src emacs-lisp
 (use-package flycheck
-  :ensure t)
+  :ensure t :config (add-hook 'after-init-hook #'global-flycheck-mode))
 #+end_src
 
 ** Completion
 
-
-
 *** Coruf
 
-Coruf for completion UI
+Coruf is the completion UI
 #+begin_src emacs-lisp
 (use-package corfu
   :ensure t
   ;; Optional customizations
-  ;; :custom
-  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  :custom
   (corfu-auto t)                 ;; Enable auto completion
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect 'prompt) ;; Always preselect the prompt
+  ;; Free the RET key for less intrusive behavior.
+  ;; Use TAB for cycling, default is `corfu-complete'.
+
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous))
+
+  :init
+
   ;; (corfu-separator ?\s)          ;; Orderless field separator
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+					; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (corfu-scroll-margin 5)        ;; Use scroll margin
 
-  ;; Enable Corfu only for certain modes.
   ;; :hook ((prog-mode . corfu-mode)
   ;;        (shell-mode . corfu-mode)
   ;;        (eshell-mode . corfu-mode))
@@ -576,23 +681,131 @@ Coruf for completion UI
   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
   ;; be used globally (M-/).  See also the customization variable
   ;; `global-corfu-modes' to exclude certain modes.
-  :init
+  :config
   (global-corfu-mode))
 
-;; A few more useful configurations...
-(use-package emacs
+(defun corfu-enable-always-in-minibuffer ()
+  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+  (unless (or (bound-and-true-p mct--active)
+              (bound-and-true-p vertico--input)
+              (eq (current-local-map) read-passwd-map))
+    ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                corfu-popupinfo-delay nil)
+    (corfu-mode 1)))
+(add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+
+;; Add extensions
+(use-package cape 
   :ensure t
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :bind (("C-c p p" . completion-at-point) ;; capf
+         ("C-c p t" . complete-tag)        ;; etags
+         ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+         ("C-c p h" . cape-history)
+         ("C-c p f" . cape-file)
+         ("C-c p k" . cape-keyword)
+         ("C-c p s" . cape-elisp-symbol)
+         ("C-c p e" . cape-elisp-block)
+         ("C-c p a" . cape-abbrev)
+         ("C-c p l" . cape-line)
+         ("C-c p w" . cape-dict)
+         ("C-c p :" . cape-emoji)
+         ("C-c p \\" . cape-tex)
+         ("C-c p _" . cape-tex)
+         ("C-c p ^" . cape-tex)
+         ("C-c p &" . cape-sgml)
+         ("C-c p r" . cape-rfc1345))
   :init
-  ;; TAB cycle if there are only few candidates
-  (setq completion-cycle-threshold 3)
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-tex)
+  (add-to-list 'completion-at-point-functions #'cape-sgml)
+  (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-dict)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  (add-to-list 'completion-at-point-functions #'cape-line)
+  )
 
-  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
-  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
-  ;; (setq read-extended-command-predicate
-  ;;       #'command-completion-default-include-p)
+;; Use Dabbrev with Corfu!
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
 
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete))
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (setq-local corfu-auto nil)
+            (corfu-mode)))
+
 #+end_src
+
+
+** Development
+
+*** Eglot
+
+Eglot for Lsp
+
+#+begin_src emacs-lisp
+;; (use-package eglot
+;;   :ensure t
+;;   :defer t
+;;   :hook (python-mode . eglot-ensure))
+
+#+end_src
+
+*** Cpp
+
+*** Common Lisp
+
+*** Shell 
+
+
+*** Debug
+
+
+** EAF
+
+install [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] fisrt.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+(require 'eaf)
+
+;; import eaf-browser
+  (require 'eaf-browser)
+  (eaf-browser-continue-where-left-off t)
+  (eaf-browser-enable-adblocker t)
+  (browse-url-browser-function 'eaf-open-browser)
+
+
+;; import pdf-viewer
+  (require 'eaf-pdf-viewer)
+ (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+#+end_src
+
+** Terminal 
+
+*** VTerm
+
+** Window Manager
+
+*** EXWM
+
 
