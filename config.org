@@ -322,7 +322,6 @@ TODO search emacs sync ways.
   (doom-themes-org-config))
 
 #+END_SRC
-
    
 ** Org Package
 
@@ -348,23 +347,24 @@ TODO search emacs sync ways.
       '(("f" occur-tree "FIXME")))
 (setq org-startup-align-all-tables t)
 (setq org-log-done 'time)
+(setq org-agenda=include-diary t)
+(setq org-agenda-time-grid t)
 
 ;; update checkbox automatically
 (defun update_checkbox()
   (org-update-checkbox-count t)
-  )
+)
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook 'update_checkbox nil 'make-it-local)))
 
 ;; Clocking Work Time
 (setq org-clock-persist 'histroy)
-(org-clock-persistance-insinuate)
+;;(org-clock-persistance-insinuate)
 
 ;; Setting org-capture
-(setq org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-			       "* TODO %?\n %i\n %a")
-			      ("j" "Journal" entry (file+datetree "~/org/journal.org")
+(setq org-capture-templates '(("t" "Todo" entry (file+headline "~/Org/gtd.org" "Tasks")
+			       "* TODO %T \n %?\n")
+			      ("j" "Journal" entry (file+datetree "~/Org/journal.org")
 			       "* %?\nEntered on %U\n %i\n %a")))
-
 #+end_src
 
 *** Org jounral
@@ -493,6 +493,7 @@ org roam for note-taking
     "o t" '(org-todo-list  :wk "Show Org Agenda Todo Lists")
     "o s" '(org-schedule  :wk "Add Schedule Timestamp")
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
+    "o a" '(org-open-at-point  :wk "Org Open At Point")
     )
 
   ;; :bind (("C-c n l" . org-roam-buffer-toggle)
