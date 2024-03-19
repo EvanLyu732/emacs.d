@@ -29,7 +29,7 @@
     - [[#org-super-agenda][Org Super Agenda]]
     - [[#org-auto-tangle][Org Auto Tangle]]
     - [[#org-roam][Org Roam]]
-- [[#learn-org-roam-02][learn org roam]]
+    - [[#org-pomodoro][Org Pomodoro]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
     - [[#focus][Focus]]
@@ -404,16 +404,14 @@ TODO search emacs sync ways.
 
 *** Org Roam
 
-* TODO learn org roam [0/2]
-+ [ ] learn the basics
-+ [ ] use org roam for jounral. [[https://www.youtube.com/watch?v=3-sLBaJAtew][link]]
-
 org roam for note-taking
 #+begin_src emacs-lisp
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory (file-truename "~/Org/"))
+  ;; TODO: create dir before loading
+  (org-roam-directory (file-truename "~/Org/Note"))
+  (org-roam-dailies-directory (file-truename "~/Org/Journal"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -426,7 +424,32 @@ org roam for note-taking
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-db-autosync-mode)
   ;; If using org-roam-protocol
-  (require 'org-roam-protocol))
+  (require 'org-roam-protocol)
+  (require 'org-roam-dailies)
+  ;; TODO
+  ;; (setq org-roam-dailies-capture-templates
+  ;; )
+)
+
+
+(use-package org-roam-ui
+  :ensure t
+  (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+  :after org-roam
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+#+end_src
+
+*** Org Pomodoro
+#+begin_src emacs-lisp
+(use-package org-pomodoro :ensure t)
 #+end_src
    
 ** General Config
@@ -493,7 +516,7 @@ org roam for note-taking
     "o t" '(org-todo-list  :wk "Show Org Agenda Todo Lists")
     "o s" '(org-schedule  :wk "Add Schedule Timestamp")
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
-    "o a" '(org-open-at-point  :wk "Org Open At Point")
+    "o p" '(org-open-at-point  :wk "Org Open At Point")
     )
 
   ;; :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -596,6 +619,7 @@ TODO learn magit [[https://www.youtube.com/watch?v=_zfvQkJsYwI][link]]
 	  ("REVIEW"     font-lock-keyword-face bold)
 	  ("DONE"       success bold)
 	  ("NOTE"       success bold)
+	  ("LATER"      font-lock-constant-face bold)
 	  ("DEPRECATED" font-lock-doc-face bold))))
 #+end_src
 
