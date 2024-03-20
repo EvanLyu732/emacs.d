@@ -367,6 +367,7 @@ TODO search emacs sync ways.
 (setq org-startup-align-all-tables t)
 (setq org-log-done 'time)
 (setq org-agenda=include-diary t)
+(setq org-startup-folded "showall")
 ;; (setq org-agenda-time-grid t)
 
 ;; update checkbox automatically
