@@ -29,6 +29,8 @@
     - [[#org-super-agenda][Org Super Agenda]]
     - [[#org-auto-tangle][Org Auto Tangle]]
     - [[#org-roam][Org Roam]]
+    - [[#org-journal][Org Journal]]
+    - [[#org-download][Org Download]]
     - [[#org-pomodoro][Org Pomodoro]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
@@ -296,6 +298,19 @@ TODO search emacs sync ways.
   :config
   (global-evil-surround-mode))
 
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys)
+  )
+
+
+
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
+
 (elpaca-wait)
 #+END_SRC
 
@@ -328,6 +343,10 @@ TODO search emacs sync ways.
 *** Org Mode Basic Settings
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-indent-mode)
+
+(setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
+
 (setq org-directory "~/Org/"
       org-agenda-files '("~/Org/agenda.org")
       org-default-notes-file (expand-file-name "notes.org" org-directory)
@@ -348,12 +367,12 @@ TODO search emacs sync ways.
 (setq org-startup-align-all-tables t)
 (setq org-log-done 'time)
 (setq org-agenda=include-diary t)
-(setq org-agenda-time-grid t)
+;; (setq org-agenda-time-grid t)
 
 ;; update checkbox automatically
 (defun update_checkbox()
   (org-update-checkbox-count t)
-)
+  )
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook 'update_checkbox nil 'make-it-local)))
 
 ;; Clocking Work Time
@@ -363,8 +382,8 @@ TODO search emacs sync ways.
 ;; Setting org-capture
 (setq org-capture-templates '(("t" "Todo" entry (file+headline "~/Org/gtd.org" "Tasks")
 			       "* TODO %T \n %?\n")
-			      ("j" "Journal" entry (file+datetree "~/Org/journal.org")
-			       "* %?\nEntered on %U\n %i\n %a")))
+			      ("i" "Idea" entry (file+datetree "~/Org/idea.org")
+			       "* Idea \n %? ")))
 #+end_src
 
 *** Org jounral
@@ -408,10 +427,19 @@ org roam for note-taking
 #+begin_src emacs-lisp
 (use-package org-roam
   :ensure t
+  :init
+  (setq org-roam-v2-ack t)
   :custom
   ;; TODO: create dir before loading
   (org-roam-directory (file-truename "~/Org/Note"))
   (org-roam-dailies-directory (file-truename "~/Org/Journal"))
+  (org-roam-completion-everywhere t)
+  (org-roam-capture-templates '(("d" "default" plain "%?"
+				 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+						    "#+title: ${title}\n")
+				 :unnarrowed t)
+				)
+			      )
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -429,7 +457,7 @@ org roam for note-taking
   ;; TODO
   ;; (setq org-roam-dailies-capture-templates
   ;; )
-)
+  )
 
 
 (use-package org-roam-ui
@@ -447,13 +475,36 @@ org roam for note-taking
         org-roam-ui-open-on-start t))
 #+end_src
 
+*** Org Journal
+#+begin_src emacs-lisp
+(use-package org-journal
+  :ensure t
+  :bind
+  ("C-c n j" . org-journal-new-entry)
+  :custom
+  (org-journal-date-prefix "#+title: ")
+  (org-journal-file-format "%Y-%m-%d.org")
+  (org-journal-dir "~/Org/Journal")
+  (org-journal-date-format "%A, %d %B %Y"))
+#+end_src
+
+*** Org Download 
+#+begin_src emacs-lisp
+(use-package org-download
+  :ensure t
+  :after org
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank))))
+#+end_src
+
 *** Org Pomodoro
 #+begin_src emacs-lisp
 (use-package org-pomodoro :ensure t)
 #+end_src
    
 ** General Config
-
 #+begin_src emacs-lisp
 (use-package general
   :ensure t
@@ -512,11 +563,12 @@ org roam for note-taking
   ;; org 
   (leader-key
     "o a" '(org-agenda :wk "Open Org Agenda")
-    "o c" '(org-capture :wk "Trigger Org Capture")
+    "o c" '(org-roam-capture :wk "Org Roam Capture Node")
     "o t" '(org-todo-list  :wk "Show Org Agenda Todo Lists")
     "o s" '(org-schedule  :wk "Add Schedule Timestamp")
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
     "o p" '(org-open-at-point  :wk "Org Open At Point")
+    "o d" '(org-roam-dailies-goto-today  :wk "Jounral Todays Node")
     )
 
   ;; :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -1102,4 +1154,5 @@ install [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] fisrt.
 
 
 ** Blog
+TODO using org blog
 
