@@ -27,6 +27,7 @@
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
     - [[#org-super-agenda][Org Super Agenda]]
+    - [[#org-mind-map][Org Mind Map]]
     - [[#org-auto-tangle][Org Auto Tangle]]
     - [[#org-roam][Org Roam]]
     - [[#org-journal][Org Journal]]
@@ -39,6 +40,8 @@
     - [[#darkroom][DarkRoom]]
   - [[#indentation][Indentation]]
     - [[#aggressive-indent][aggressive-indent]]
+  - [[#jumping][Jumping]]
+    - [[#avy][Avy]]
   - [[#magit][Magit]]
   - [[#rainbow-bracket][Rainbow-Bracket]]
   - [[#rainbow-delimters][Rainbow-Delimters]]
@@ -65,13 +68,17 @@
     - [[#cpp][Cpp]]
     - [[#common-lisp][Common Lisp]]
     - [[#shell][Shell]]
+    - [[#treesitter][TreeSitter]]
     - [[#debug][Debug]]
-  - [[#eaf][EAF]]
   - [[#terminal][Terminal]]
     - [[#vterm][VTerm]]
   - [[#window-manager][Window Manager]]
     - [[#exwm][EXWM]]
   - [[#blog][Blog]]
+  - [[#drawing][Drawing]]
+    - [[#edraw][EDraw]]
+  - [[#pdf][Pdf]]
+    - [[#pdf-tools][Pdf Tools]]
 
 * Basic Setting 
 
@@ -186,6 +193,9 @@ TODO search emacs sync ways.
 (setq package-archives '(("gnu"   . "http://1.15.88.122/gnu/")
 			 ("melpa" . "http://1.15.88.122/melpa/")))
 #+end_src
+
+#+RESULTS:
+: ((gnu . http://1.15.88.122/gnu/) (melpa . http://1.15.88.122/melpa/))
    
 
 
@@ -413,6 +423,27 @@ TODO search emacs sync ways.
 (use-package org-super-agenda :ensure t :config (org-super-agenda-mode t))
 #+end_src
 
+*** Org Mind Map
+#+begin_src emacs-lisp
+;; This is an Emacs package that creates graphviz directed graphs from
+;; the headings of an org file
+(use-package org-mind-map
+  :init
+  (require 'ox-org)
+  :ensure t
+  ;; Uncomment the below if 'ensure-system-packages` is installed
+  ;;:ensure-system-package (gvgen . graphviz)
+  :config
+  (setq org-mind-map-engine "dot")       ; Default. Directed Graph
+  ;; (setq org-mind-map-engine "neato")  ; Undirected Spring Graph
+  ;; (setq org-mind-map-engine "twopi")  ; Radial Layout
+  ;; (setq org-mind-map-engine "fdp")    ; Undirected Spring Force-Directed
+  ;; (setq org-mind-map-engine "sfdp")   ; Multiscale version of fdp for the layout of large graphs
+  ;; (setq org-mind-map-engine "twopi")  ; Radial layouts
+  ;; (setq org-mind-map-engine "circo")  ; Circular Layout
+  )
+#+end_src
+
 *** Org Auto Tangle
 
 #+begin_src emacs-lisp
@@ -423,6 +454,9 @@ TODO search emacs sync ways.
 #+end_src
 
 *** Org Roam
+:LOGBOOK:
+CLOCK: [2024-03-22 Fri 11:27]--[2024-03-22 Fri 11:52] =>  0:25
+:END:
 
 org roam for note-taking
 #+begin_src emacs-lisp
@@ -509,6 +543,16 @@ org roam for note-taking
 #+begin_src emacs-lisp
 (use-package general
   :ensure t
+  :init
+  (setq general-override-states '(insert
+                                  emacs
+                                  hybrid
+                                  normal
+                                  visual
+                                  motion
+                                  operator
+                                  replace
+				  ))
   :config
   (general-evil-setup)
   
@@ -518,6 +562,12 @@ org roam for note-taking
     :keymaps 'override
     :prefix "SPC" ;; set leader
     :global-prefix "M-SPC") ;; access leader in insert mode
+
+  ;; evil rebind ecs key to bn: bn means "back to normal"
+  (general-imap "b"
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.1
+      "n" 'evil-normal-state))
 
   ;; help
   (leader-key
@@ -544,9 +594,15 @@ org roam for note-taking
     "b R" '(rename-buffer :wk "Rename buffer")
     )
 
+  ;; Navigating
+  (leader-key
+    "g w" '(avy-goto-word-1 :wk "Avy Go To Word")
+    "g l" '(avy-goto-line :wk "Avy Go To Link")
+    )
+
   ;; config
   (leader-key
-    "." '(find-file :wk "Find file")
+    "f f" '(find-file :wk "Find file")
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit emacs config") "f r" '(counsel-recentf :wk "Find recent files")
     "f a" '((lambda () (interactive) (find-file "~/Org/agenda.org")) :wk "Open Org Agneda") "f r" '(counsel-recentf :wk "Find recent files")
     "f r" '(reload-init-file :wk "Reload Config")
@@ -565,7 +621,7 @@ org roam for note-taking
   (leader-key
     "o a" '(org-agenda :wk "Open Org Agenda")
     "o c" '(org-roam-capture :wk "Org Roam Capture Node")
-    "o t" '(org-todo-list  :wk "Show Org Agenda Todo Lists")
+    "o t" '(org-pomodoro  :wk "Pomodoro Timing")
     "o s" '(org-schedule  :wk "Add Schedule Timestamp")
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
     "o p" '(org-open-at-point  :wk "Org Open At Point")
@@ -590,7 +646,7 @@ org roam for note-taking
     "z" '(darkroom-mode :wk "Zen Mode")
     )
   )
-#+end_src
+  #+end_src
 
 
 ** Focus Mode
@@ -630,6 +686,13 @@ DarkRoom for Zen Mode
   (global-aggressive-indent-mode 1)
 
   )
+#+end_src
+
+** Jumping
+
+*** Avy
+#+begin_src emacs-lisp
+(use-package avy :ensure t)
 #+end_src
 
 
@@ -777,11 +840,7 @@ bug hunter for hunting emacs configuration file
 ** Project File
 
 #+begin_src emacs-lisp
-(use-package projectfile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  )
+;;(projectile-mode +1)
 #+end_src
 
 ** Minibuffer
@@ -1119,31 +1178,10 @@ Eglot for Lsp
 
 *** Shell 
 
+*** TreeSitter
 
 *** Debug
 
-
-** EAF
-
-install [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] fisrt.
-
-
-#+begin_src emacs-lisp
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
-;; (require 'eaf)
-
-;; ;; import eaf-browser
-;;   (require 'eaf-browser)
-;;   (eaf-browser-continue-where-left-off t)
-;;   (eaf-browser-enable-adblocker t)
-;;   (browse-url-browser-function 'eaf-open-browser)
-
-
-;; ;; import pdf-viewer
-;;   (require 'eaf-pdf-viewer)
-;;  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-;;   (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-#+end_src
 
 ** Terminal 
 
@@ -1157,3 +1195,41 @@ install [[https://github.com/emacs-eaf/emacs-application-framework][eaf]] fisrt.
 ** Blog
 TODO using org blog
 
+** Drawing 
+
+*** EDraw
+
+#+begin_src emacs-lisp
+#+end_src
+
+** Pdf
+*** Pdf Tools
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  :defer t
+  :commands (pdf-loader-install)
+  :mode "\\.pdf\\'"
+  :bind (:map pdf-view-mode-map
+              ("SPC" . ignore)
+              ("/" . pdf-isearch-occur)
+              ("C-=" . pdf-view-enlarge)
+              ("C--" . pdf-view-shrink))
+  :init (pdf-loader-install)
+  :config (add-to-list 'revert-without-query ".pdf"))
+
+(add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1)
+                                  (blink-cursor-mode -1)
+                                  (doom-modeline-mode -1)))
+;; (evil-define-key 'normal pdf-view-mode-map
+;;   (kbd "j") 'pdf-view-next-line-or-next-page
+;;   (kbd "J") 'pdf-view-next-page
+;;   (kbd "k") 'pdf-view-previous-line-or-previous-page
+;;   (kbd "K") 'pdf-view-last-page
+;;   (kbd "h") 'image-backward-hscroll
+;;   (kbd "l") 'image-forward-hscroll
+;;   (kbd "J") 'pdf-view-next-page
+;;   (kbd "K") 'pdf-view-previous-page
+;;   (kbd "0") 'image-bol
+;;   (kbd "$") 'image-eol)
+#+end_src
