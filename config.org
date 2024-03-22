@@ -22,7 +22,6 @@
     - [[#doom-theme][Doom Theme]]
   - [[#org-package][Org Package]]
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
-    - [[#org-jounral][Org jounral]]
     - [[#tables-of-contents][Tables Of Contents]]
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
@@ -286,13 +285,15 @@ TODO search emacs sync ways.
   (evil-mode)
   (setq x-select-enable-clipboard nil)
   )
+
 (use-package evil-collection
   :after evil
   :ensure t
   :demand nil 
   :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (setq evil-collection-mode-list '(dashboard dired ibuffer pdf magit))
   (evil-collection-init))
+
 
 (use-package evil-commentary
   :after evil
@@ -396,8 +397,6 @@ TODO search emacs sync ways.
 			      ("i" "Idea" entry (file+datetree "~/Org/idea.org")
 			       "* Idea \n %? ")))
 #+end_src
-
-*** Org jounral
 
 *** Tables Of Contents
 #+begin_src emacs-lisp
@@ -520,7 +519,23 @@ org roam for note-taking
   (org-journal-date-prefix "#+title: ")
   (org-journal-file-format "%Y-%m-%d.org")
   (org-journal-dir "~/Org/Journal")
-  (org-journal-date-format "%A, %d %B %Y"))
+  (org-journal-date-format "%A, %d %B %Y")
+  :config
+  (setq org-journal-dir "~/Org/Journal")
+  (setq org-journal-enable-agenda-integration t)
+  )
+
+(defun org-journal-find-location ()
+  ;; Open today's journal, but specify a non-nil prefix argument in order to
+  ;; inhibit inserting the heading; org-capture will insert the heading.
+  (org-journal-new-entry t)
+  (unless (eq org-journal-file-type 'daily)
+    (org-narrow-to-subtree))
+  (goto-char (point-max)))
+
+(setq org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
+                               "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                               :jump-to-captured t :immediate-finish t)))
 #+end_src
 
 *** Org Download 
@@ -625,7 +640,7 @@ org roam for note-taking
     "o s" '(org-schedule  :wk "Add Schedule Timestamp")
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
     "o p" '(org-open-at-point  :wk "Org Open At Point")
-    "o d" '(org-roam-dailies-goto-today  :wk "Jounral Todays Node")
+    "o j" '(org-journal-new-entry :wk "New Org Jounral")
     )
 
   ;; :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -646,7 +661,7 @@ org roam for note-taking
     "z" '(darkroom-mode :wk "Zen Mode")
     )
   )
-  #+end_src
+#+end_src
 
 
 ** Focus Mode
@@ -1212,6 +1227,10 @@ TODO using org blog
   :mode "\\.pdf\\'"
   :bind (:map pdf-view-mode-map
               ("SPC" . ignore)
+              ("j" . pdf-view-next-line-or-next-page) 
+              ("J" . pdf-view-next-page) 
+              ("k" . pdf-view-previous-line-or-previous-page) 
+              ("K" . pdf-view-last-page) 
               ("/" . pdf-isearch-occur)
               ("C-=" . pdf-view-enlarge)
               ("C--" . pdf-view-shrink))
