@@ -20,7 +20,6 @@
     - [[#doom-theme][Doom Theme]]
   - [[#org-package][Org Package]]
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
-    - [[#org-autolist][Org Autolist]]
     - [[#tables-of-contents][Tables Of Contents]]
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
@@ -279,6 +278,7 @@ Switch <CAPS> and <CTRL>
 ;;(elpaca nil (message "deferred"))
 #+END_SRC
 
+
 ** Evil Mode
 
 #+BEGIN_SRC emacs-lisp
@@ -409,15 +409,6 @@ Switch <CAPS> and <CTRL>
 			       "* TODO %T \n %?\n")
 			      ("i" "Idea" entry (file+datetree "~/Org/idea.org")
 			       "* Idea \n %? ")))
-#+end_src
-
-*** Org Autolist
-#+begin_src emacs-lisp
-(use-package org-autolist
-  :hook (org-mode . org-autolist-mode)
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
-)
 #+end_src
 
 *** Tables Of Contents
@@ -677,7 +668,7 @@ TODO all packages keymap using general for configuration
 
   ;; magit
   (leader-key
-    "g" '(magit :wk "Call Magit")
+    "g g" '(magit :wk "Call Magit")
   ) 
 
 
@@ -1429,23 +1420,21 @@ link: https://www.youtube.com/watch?v=AfkrzFodoNw
               ("/" . pdf-isearch-occur)
               ("C-=" . pdf-view-enlarge)
               ("C--" . pdf-view-shrink))
+              ("C-f" . pdf-view-next-page)
+              ("C-b" . pdf-view-last-page)
+              ("C-s" . switch-to-buffer)
+              ("C-e" . neotree-toggle)
   :init (pdf-loader-install)
-  :config (add-to-list 'revert-without-query ".pdf"))
-
-(add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (display-line-numbers-mode -1)
+  :config
+  ;; (evil-set-initial-state 'pdf-view-mode 'normal)
+  (add-to-list 'revert-without-query ".pdf")
+  (add-hook 'pdf-view-mode-hook #'(lambda () (interactive)         (display-line-numbers-mode -1)
                                   (blink-cursor-mode -1)
                                   (doom-modeline-mode -1)))
-;; (evil-define-key 'normal pdf-view-mode-map
-;;   (kbd "j") 'pdf-view-next-line-or-next-page
-;;   (kbd "J") 'pdf-view-next-page
-;;   (kbd "k") 'pdf-view-previous-line-or-previous-page
-;;   (kbd "K") 'pdf-view-last-page
-;;   (kbd "h") 'image-backward-hscroll
-;;   (kbd "l") 'image-forward-hscroll
-;;   (kbd "J") 'pdf-view-next-page
-;;   (kbd "K") 'pdf-view-previous-page
-;;   (kbd "0") 'image-bol
-;;   (kbd "$") 'image-eol)
+)
+
+
+
 #+end_src
 
 ** KeyCast
@@ -1454,3 +1443,4 @@ link: https://www.youtube.com/watch?v=AfkrzFodoNw
   :ensure t
 )
 #+end_src
+
