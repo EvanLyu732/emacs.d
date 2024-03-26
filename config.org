@@ -12,7 +12,6 @@
   - [[#chinese-input][Chinese Input]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
-- [[#sync][Sync]]
 - [[#custom-function][Custom Function]]
 - [[#packages][Packages]]
   - [[#using-emacs-china-package-source][Using Emacs China Package Source]]
@@ -22,6 +21,7 @@
     - [[#doom-theme][Doom Theme]]
   - [[#org-package][Org Package]]
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
+    - [[#org-autolist][Org Autolist]]
     - [[#tables-of-contents][Tables Of Contents]]
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
@@ -64,15 +64,17 @@
   - [[#search][Search]]
     - [[#consult-1][Consult]]
     - [[#orderless][Orderless]]
+    - [[#ripgrep][Ripgrep]]
+    - [[#fzf][Fzf]]
   - [[#development][Development]]
     - [[#treesitter][Treesitter]]
     - [[#eglot][Eglot]]
     - [[#eldoc][Eldoc]]
     - [[#snippets][Snippets]]
-    - [[#terminal][Terminal]]
     - [[#debug][Debug]]
-  - [[#terminal-1][Terminal]]
+  - [[#terminal][Terminal]]
     - [[#vterm][VTerm]]
+  - [[#sudo-edit][Sudo Edit]]
   - [[#window-manager][Window Manager]]
     - [[#exwm][EXWM]]
   - [[#blog][Blog]]
@@ -111,7 +113,7 @@
 (setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
 
 ;; auto pair
-;;(electric-pair-mode t)
+;; (electric-pair-mode t)
 
 #+end_src
 
@@ -173,10 +175,6 @@
 
 #+end_src
 
-* Sync
-
-TODO search emacs sync ways.
-
 * Custom Function
   
 #+begin_src emacs-lisp
@@ -185,7 +183,7 @@ TODO search emacs sync ways.
   (interactive)
   (load-file user-init-file)
   (load-file user-init-file)
-  )
+)
 #+end_src
 
 
@@ -295,7 +293,9 @@ TODO search emacs sync ways.
   :ensure t
   :demand nil 
   :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer pdf magit))
+  (setq evil-collection-mode-list
+         '(dashboard dired ibuffer pdf magit neotree vterm)
+  )
   (evil-collection-init))
 
 
@@ -400,6 +400,15 @@ TODO search emacs sync ways.
 			       "* TODO %T \n %?\n")
 			      ("i" "Idea" entry (file+datetree "~/Org/idea.org")
 			       "* Idea \n %? ")))
+#+end_src
+
+*** Org Autolist
+#+begin_src emacs-lisp
+(use-package org-autolist
+  :hook (org-mode . org-autolist-mode)
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-autolist-mode)))
+)
 #+end_src
 
 *** Tables Of Contents
@@ -556,6 +565,9 @@ org roam for note-taking
 #+end_src
    
 ** General Config
+
+TODO all packages keymap using general for configuration
+
 #+begin_src emacs-lisp
 (use-package general
   :ensure t
@@ -600,6 +612,15 @@ org roam for note-taking
     "h f" '(describe-function :wk "Describe Function")
     )
 
+  (general-override-mode)
+
+  (general-def 'normal 'override
+    "C-h" 'evil-window-left
+    "C-j" 'evil-window-down
+    "C-k" 'evil-window-up
+    "C-l" 'evil-window-right
+   )
+
   ;; buffer 
   (leader-key
     "b" '(:ignore t :wk "Bookmarks/Buffers")
@@ -633,15 +654,6 @@ org roam for note-taking
     "f r" '(reload-init-file :wk "Reload Config")
     )
 
-
-  ;; :bind (("C-c n l" . org-roam-buffer-toggle)
-  ;;        ("C-c n f" . org-roam-node-find)
-  ;;        ("C-c n g" . org-roam-graph)
-  ;;        ("C-c n i" . org-roam-node-insert)
-  ;;        ("C-c n c" . org-roam-capture)
-  ;;        ;; Dailies
-  ;;        ("C-c n j" . org-roam-dailies-capture-today))
-
   ;; org 
   (leader-key
     "o a" '(org-agenda :wk "Open Org Agenda")
@@ -653,24 +665,29 @@ org roam for note-taking
     "o j" '(org-journal-new-entry :wk "New Org Jounral")
     )
 
-  ;; :bind (("C-c n l" . org-roam-buffer-toggle)
-  ;;        ("C-c n f" . org-roam-node-find)
-  ;;        ("C-c n g" . org-roam-graph)
-  ;;        ("C-c n i" . org-roam-node-insert)
-  ;;        ("C-c n c" . org-roam-capture)
-  ;;        ;; Dailies
-  ;;        ("C-c n j" . org-roam-dailies-capture-today))
+
+  ;; completition
+  (leader-key
+    "c" '(company-complete :wk "Call Company Completion")
+  ) 
+
 
   ;; file explorer 
   (leader-key
     "e" '(neotree-toggle :wk "Open Neotree")
-    )
+   )
+
+
+  ;; projectile
+  (leader-key
+    "p s" '(projectile-switch-project :wk "Projectile Switch Project")
+  )
 
   ;; other
   (leader-key
     "z" '(darkroom-mode :wk "Zen Mode")
     )
-  )
+)
 #+end_src
 
 
@@ -708,10 +725,10 @@ DarkRoom for Zen Mode
   :ensure t
   :config
   (add-to-list 'aggressive-indent-excluded-modes '(
-      html-mode c++-ts-mode c++-mode
-  ))
+						   html-mode c++-ts-mode c++-mode
+						   ))
   (global-aggressive-indent-mode 1)
-)
+  )
 #+end_src
 
 ** Jumping
@@ -793,13 +810,13 @@ TODO learn magit [[https://www.youtube.com/watch?v=_zfvQkJsYwI][link]]
 (use-package neotree
   :ensure t
   :config
- (setq neo-smart-open t
-     neo-show-hidden-files t
-     neo-window-width 35
-     neo-window-fixed-size nil
-     inhibit-compacting-font-caches t
-     projectile-switch-project-action 'neotree-projectile-action) 
-)
+  (setq neo-smart-open t
+	neo-show-hidden-files t
+	neo-window-width 35
+	neo-window-fixed-size nil
+	inhibit-compacting-font-caches t
+	projectile-switch-project-action 'neotree-projectile-action) 
+  )
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 #+end_src
 
@@ -859,11 +876,15 @@ bug hunter for hunting emacs configuration file
   (setq dashboard-banner-logo-title "emacs rocks")
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-center-content nil)
+  (setq dashboard-icon-type 'all-the-icons)
+  (setq dashboard-week-agenda t)
+  (setq dashboard-projects-backend 'projectile)
   (setq dashboard-items '((recents . 5)
                           (projects . 3)
                           (agenda . 3)))
-  
   :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
   (dashboard-setup-startup-hook)
   )
 
@@ -876,7 +897,19 @@ bug hunter for hunting emacs configuration file
   :ensure t
   :config
   (projectile-mode +1)
-)
+  (setq projectile-auto-discover t)
+  ;; (projectile-register-project-type 'npm '("package.json")
+  ;;                                   :project-file "package.json"
+  ;; 				  :compile "npm install"
+  ;; 				  :test "npm test"
+  ;; 				  :run "npm start"
+  ;; 				  :test-suffix ".spec")
+  (projectile-register-project-type 'evans-project '("project-org")
+				    :project-file "project.org"
+				    )
+  )
+
+
 #+end_src
 
 ** Minibuffer
@@ -939,11 +972,11 @@ bug hunter for hunting emacs configuration file
   (global-company-mode t)
   :custom
   (company-begin-commands '(self-insert-command)
-  (company-minimum-prefix-length 1)
-  (company-selection-wrap-around t)
-  (company-tng-configure-default)
-  (company-idle-delay 0.1))
-)
+			  (company-minimum-prefix-length 1)
+			  (company-selection-wrap-around t)
+			  (company-tng-configure-default)
+			  (company-idle-delay 0.05))
+  )
 
 (setq completion-ignore-case  t)
 ;; With use-package:
@@ -959,7 +992,7 @@ bug hunter for hunting emacs configuration file
   :after company
   :init
   (company-quickhelp-mode)
-)
+  )
 #+end_src
 
 *** Caps
@@ -1004,7 +1037,7 @@ bug hunter for hunting emacs configuration file
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
-)
+  )
 #+end_src
 
 
@@ -1141,7 +1174,7 @@ bug hunter for hunting emacs configuration file
    :preview-key '(:debounce 0.4 any))
 
   ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
+  ;; Both  and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; "C-+"
 
   ;; Optionally make narrowing help available in the minibuffer.
@@ -1161,7 +1194,7 @@ bug hunter for hunting emacs configuration file
   ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
   ;;;; 5. No project support
   ;; (setq consult-project-function nil)
-  )
+)
 #+end_src
 
 *** Orderless
@@ -1172,6 +1205,34 @@ bug hunter for hunting emacs configuration file
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
+
+*** Ripgrep
+
+#+begin_src emacs-lisp
+(use-package rg :ensure t :config (rg-enable-default-bindings))
+#+end_src
+
+*** Fzf
+
+ #+begin_src emacs-lisp
+ (use-package fzf
+   :ensure t
+   :bind
+     ;; Don't forget to set keybinds!
+   :config
+   (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
+	 fzf/executable "fzf"
+	 fzf/git-grep-args "-i --line-number %s"
+	 ;; command used for `fzf-grep-*` functions
+	 ;; example usage for ripgrep:
+	 ;; fzf/grep-command "rg --no-heading -nH"
+	 fzf/grep-command "grep -nrH"
+	 ;; If nil, the fzf buffer will appear at the top of the window
+	 fzf/position-bottom t
+	 fzf/window-height 15))
+ #+end_src
+
+
 
 ** Development
 
@@ -1210,7 +1271,7 @@ Eglot for Lsp
 
   (add-hook 'c-ts-mode-hook 'eglot-ensure)
   (add-hook 'c++-ts-mode-hook 'eglot-ensure)
-)
+  )
 
 (setq eglot-stay-out-of '(flymake))
 
@@ -1264,18 +1325,16 @@ Eglot for Lsp
   ;; either locally or globally. `expand-abbrev' is bound to C-x '.
   ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
   ;; (global-tempel-abbrev-mode)
-)
+  )
 
 ;; Optional: Add tempel-collection.
 ;; The package is young and doesn't have comprehensive coverage.
 (use-package tempel-collection
   :ensure t
   :after tempel
-)
+  )
 
 #+end_src
-
-*** Terminal
 
 
 *** Debug
@@ -1287,6 +1346,39 @@ TODO
 ** Terminal 
 
 *** VTerm
+#+begin_src emacs-lisp
+(use-package vterm :ensure t )
+
+(use-package vterm-toggle
+  :ensure t 
+  :after vterm
+  :config
+  ;; When running programs in Vterm and in 'normal' mode, make sure that ESC
+  ;; kills the program as it would in most standard terminal programs.
+  (evil-define-key 'normal vterm-mode-map (kbd "<escape>") 'vterm--self-insert)
+  (setq vterm-toggle-fullscreen-p nil)
+  (setq vterm-toggle-scope 'project)
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-or-name _)
+                     (let ((buffer (get-buffer buffer-or-name)))
+                       (with-current-buffer buffer
+                         (or (equal major-mode 'vterm-mode)
+                             (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                  (display-buffer-reuse-window display-buffer-at-bottom)
+                  ;;(display-buffer-reuse-window display-buffer-in-direction)
+                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                  ;;(direction . bottom)
+                  ;;(dedicated . t) ;dedicated is supported in emacs27
+                  (reusable-frames . visible)
+                  (window-height . 0.4))))
+
+#+end_src
+
+** Sudo Edit
+#+begin_src emacs-lisp
+(use-package sudo-edit :ensure t)
+#+end_src
+
 
 ** Window Manager
 
@@ -1295,7 +1387,7 @@ TODO
 
 ** Blog
 TODO using org-publish for building blog (elisp require)
-   link: https://www.youtube.com/watch?v=AfkrzFodoNw
+link: https://www.youtube.com/watch?v=AfkrzFodoNw
 *** ox-publish
 
 ** Drawing 
