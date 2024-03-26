@@ -118,6 +118,8 @@
 
 ** Rebind Key 
 
+Switch <CAPS> and <CTRL>
+
 #+begin_src emacs-lisp
 
 ;; linux 
@@ -178,7 +180,6 @@
   (load-file user-init-file)
 )
 
-;; append eval-last-sexp inline
 (defun eval-and-append-result ()
   "Evaluate the expression before the point, append the result, and insert a new line with a comment."
   (interactive)
@@ -186,6 +187,16 @@
     ;; Insert the result as a string
   (insert (format " ; => %s" result))
 ))
+
+(defun eval-region-and-append-result (start end)
+  "Evaluate the region from START to END and append the result as a comment."
+  (interactive "r") ; 'r' means this command works on the current region
+  (let ((result (eval (read (buffer-substring start end)))))
+    ;; Move point to the end of the current region
+    (goto-char end)
+    ;; Insert the result as a comment
+    (insert (format " ; => %s" result)))
+)
 #+end_src
 
 
@@ -617,7 +628,7 @@ TODO all packages keymap using general for configuration
     "C-j" 'evil-window-down
     "C-k" 'evil-window-up
     "C-l" 'evil-window-right
-   )
+  )
 
   ;; buffer 
   (leader-key
@@ -648,7 +659,8 @@ TODO all packages keymap using general for configuration
   (leader-key
     "f f" '(find-file :wk "Find file")
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit emacs config") "f r" '(counsel-recentf :wk "Find recent files")
-    "f a" '((lambda () (interactive) (find-file "~/Org/agenda.org")) :wk "Open Org Agneda") "f r" '(counsel-recentf :wk "Find recent files")
+    "f a" '((lambda () (interactive) (find-file "~/Org/agenda.org")) :wk "Open My Agneda") "f r" '(counsel-recentf :wk "Find recent files")
+    "f p" '((lambda () (interactive) (find-file "~/Org/project.org")) :wk "Open My Projects") "f r" '(counsel-recentf :wk "Find recent files")
     "f r" '(reload-init-file :wk "Reload Config")
     )
 
@@ -661,7 +673,12 @@ TODO all packages keymap using general for configuration
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
     "o p" '(org-open-at-point  :wk "Org Open At Point")
     "o j" '(org-journal-new-entry :wk "New Org Jounral")
-    )
+  )
+
+  ;; magit
+  (leader-key
+    "g" '(magit :wk "Call Magit")
+  ) 
 
 
   ;; completition
