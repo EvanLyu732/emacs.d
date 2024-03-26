@@ -81,6 +81,7 @@
     - [[#edraw][EDraw]]
   - [[#pdf][Pdf]]
     - [[#pdf-tools][Pdf Tools]]
+    - [[#pdf-view-restore][Pdf View Restore]]
   - [[#keycast][KeyCast]]
 
 * Basic Setting 
@@ -1435,6 +1436,15 @@ link: https://www.youtube.com/watch?v=AfkrzFodoNw
 
 
 
+#+end_src
+
+*** Pdf View Restore
+#+begin_src emacs-lisp
+(use-package pdf-view-restore
+  :ensure t
+  :after pdf-tools
+  :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+end_src
 
 ** KeyCast
