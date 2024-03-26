@@ -177,6 +177,15 @@
   (load-file user-init-file)
   (load-file user-init-file)
 )
+
+;; append eval-last-sexp inline
+(defun eval-and-append-result ()
+  "Evaluate the expression before the point, append the result, and insert a new line with a comment."
+  (interactive)
+  (let ((result (eval (preceding-sexp))))
+    ;; Insert the result as a string
+  (insert (format " ; => %s" result))
+))
 #+end_src
 
 
