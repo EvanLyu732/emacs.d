@@ -9,7 +9,6 @@
 - [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
   - [[#rebind-key][Rebind Key]]
-  - [[#chinese-input][Chinese Input]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
 - [[#custom-function][Custom Function]]
@@ -127,12 +126,6 @@
 
 #+end_src
 
-** Chinese Input
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 ** Font
 
 #+begin_src emacs-lisp
@@ -194,10 +187,6 @@
 (setq package-archives '(("gnu"   . "http://1.15.88.122/gnu/")
 			 ("melpa" . "http://1.15.88.122/melpa/")))
 #+end_src
-
-#+RESULTS:
-: ((gnu . http://1.15.88.122/gnu/) (melpa . http://1.15.88.122/melpa/))
-   
 
 
 ** Elpaca Package Manager
