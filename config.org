@@ -628,24 +628,29 @@ TODO all packages keymap using general for configuration
     "b s" '(switch-to-buffer :wk "Switch to buffer")
     "b c" '(clone-indirect-buffer :wk "Create indirect buffer copy in a split")
     "b C" '(clone-indirect-buffer-other-window :wk "Clone indirect buffer in new window")
-    "b d" '(bookmark-delete :wk "Delete bookmark")
+    ;; "b d" '(bookmark-delete :wk "Delete bookmark")
     "b i" '(ibuffer :wk "Ibuffer")
     "b k" '(kill-current-buffer :wk "Kill current buffer")
     "b K" '(kill-some-buffers :wk "Kill multiple buffers")
     "b l" '(list-bookmarks :wk "List bookmarks")
-    "b m" '(bookmark-set :wk "Set bookmark")
+    ;; "b m" '(bookmark-set :wk "Set bookmark")
     "b n" '(next-buffer :wk "Next buffer")
     "b p" '(previous-buffer :wk "Previous buffer")
     "b r" '(revert-buffer :wk "Reload buffer")
     "b R" '(rename-buffer :wk "Rename buffer")
     )
 
+  ;; window
+  (leader-key
+    "w m" '(delete-other-windows :wk "Delete Other Windows")
+   )
+
   ;; Navigating
   (leader-key
     "g w" '(avy-goto-word-1 :wk "Avy Go To Word")
     "g c" '(avy-goto-char-timer :wk "Avy Go To Char With Timer")
     "g l" '(avy-goto-line :wk "Avy Go To Link")
-    )
+   )
 
   ;; config
   (leader-key
