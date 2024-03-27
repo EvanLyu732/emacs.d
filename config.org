@@ -16,6 +16,8 @@
   - [[#using-emacs-china-package-source][Using Emacs China Package Source]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
   - [[#evil-mode][Evil Mode]]
+  - [[#buffer-mangment][Buffer Mangment]]
+    - [[#frog-jump-buffer][Frog Jump Buffer]]
   - [[#theme][Theme]]
     - [[#doom-theme][Doom Theme]]
   - [[#org-package][Org Package]]
@@ -339,6 +341,14 @@ Switch <CAPS> and <CTRL>
 (elpaca-wait)
 #+END_SRC
 
+** Buffer Mangment 
+
+*** Frog Jump Buffer
+#+begin_src emacs-lisp
+(use-package frog-jump-buffer :ensure t)
+#+end_src
+
+
 ** Theme
 
 *** Doom Theme 
@@ -603,7 +613,7 @@ TODO all packages keymap using general for configuration
     "h" '(:ignore t :wk "Help")
     "h v" '(describe-variable :wk "Describe Variable")
     "h f" '(describe-function :wk "Describe Function")
-    )
+   )
 
   ;; fast execute M-x
 
@@ -611,15 +621,17 @@ TODO all packages keymap using general for configuration
     "h" '(:ignore t :wk "Help")
     "h v" '(describe-variable :wk "Describe Variable")
     "h f" '(describe-function :wk "Describe Function")
-    )
-
-  (general-override-mode)
+  )
 
   (general-def 'normal 'override
     "C-h" 'evil-window-left
     "C-j" 'evil-window-down
     "C-k" 'evil-window-up
     "C-l" 'evil-window-right
+  )
+
+  (general-def 'insert 'override
+    "C-b" 'frog-jump-buffer
   )
 
   ;; buffer 
