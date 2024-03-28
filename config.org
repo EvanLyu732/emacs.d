@@ -117,6 +117,9 @@
 ;; auto pair
 ;; (electric-pair-mode t)
 
+
+;; dired auto refresh 
+(add-hook 'dired-mode-hook 'auto-revert-mode)
 #+end_src
 
 ** Rebind Key 
@@ -1416,9 +1419,25 @@ TODO
 
 
 ** Blog
-TODO using org-publish for building blog (elisp require)
-link: https://www.youtube.com/watch?v=AfkrzFodoNw
+TODO
+   * using org-publish for building blog (elisp require)
+   * use this link https://www.reddit.com/r/emacs/comments/ng9hyq/good_tutorials_on_orgpublish/ and this link https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html#org376932a
+   * this link is fun https://diego.codes/post/2019-reading-list/
+
 *** ox-publish
+#+begin_src emacs-lisp
+(require 'ox-publish)
+
+(setq org-publish-project-alist
+      '(("posts"
+         :base-directory "~/Org/Blog/" ;; original posts location
+         :base-extension "org"
+         :publishing-directory "~/Org/public/"
+         :recursive t ;; recursive generate data
+         :publishing-function org-html-publish-to-html
+         :auto-sitemap t)
+        ("all" :components ("posts"))))
+ #+end_src
 
 ** Drawing 
 
