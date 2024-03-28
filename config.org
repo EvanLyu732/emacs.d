@@ -16,7 +16,9 @@
   - [[#using-emacs-china-package-source][Using Emacs China Package Source]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
   - [[#evil-mode][Evil Mode]]
-  - [[#buffer-mangment][Buffer Mangment]]
+  - [[#workspace-managment][Workspace Managment]]
+    - [[#perspective][Perspective]]
+  - [[#buffer-managment][Buffer Managment]]
     - [[#frog-jump-buffer][Frog Jump Buffer]]
   - [[#theme][Theme]]
     - [[#doom-theme][Doom Theme]]
@@ -79,7 +81,7 @@
   - [[#window-manager][Window Manager]]
     - [[#exwm][EXWM]]
   - [[#blog][Blog]]
-    - [[#ox-publish][ox-publish]]
+    - [[#ox-zola][ox-zola]]
   - [[#drawing][Drawing]]
     - [[#edraw][EDraw]]
   - [[#pdf][Pdf]]
@@ -345,7 +347,20 @@ Switch <CAPS> and <CTRL>
 (elpaca-wait)
 #+END_SRC
 
-** Buffer Mangment 
+** Workspace Managment
+*** Perspective 
+#+begin_src emacs-lisp
+(use-package perspective
+  :ensure t
+  :bind
+  ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
+  :custom
+  (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
+  :init
+  (persp-mode))
+#+end_src
+
+** Buffer Managment 
 
 *** Frog Jump Buffer
 #+begin_src emacs-lisp
@@ -1424,19 +1439,13 @@ TODO
    * use this link https://www.reddit.com/r/emacs/comments/ng9hyq/good_tutorials_on_orgpublish/ and this link https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html#org376932a
    * this link is fun https://diego.codes/post/2019-reading-list/
 
-*** ox-publish
-#+begin_src emacs-lisp
-(require 'ox-publish)
+*** ox-zola
 
-(setq org-publish-project-alist
-      '(("posts"
-         :base-directory "~/Org/Blog/" ;; original posts location
-         :base-extension "org"
-         :publishing-directory "~/Org/public/"
-         :recursive t ;; recursive generate data
-         :publishing-function org-html-publish-to-html
-         :auto-sitemap t)
-        ("all" :components ("posts"))))
+#+begin_src emacs-lisp
+(use-package ox-zola
+    :ensure t
+    :config
+    (require 'ox-hugo))
  #+end_src
 
 ** Drawing 
