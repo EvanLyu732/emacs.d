@@ -27,6 +27,7 @@
     - [[#org-tempo][Org Tempo]]
     - [[#org-super-agenda][Org Super Agenda]]
     - [[#org-mind-map][Org Mind Map]]
+    - [[#org-preview-html][Org Preview HTML]]
     - [[#org-auto-tangle][Org Auto Tangle]]
     - [[#org-roam][Org Roam]]
     - [[#org-journal][Org Journal]]
@@ -465,6 +466,11 @@ Switch <CAPS> and <CTRL>
   ;; (setq org-mind-map-engine "twopi")  ; Radial layouts
   ;; (setq org-mind-map-engine "circo")  ; Circular Layout
   )
+#+end_src
+
+*** Org Preview HTML
+#+begin_src emacs-lisp
+(use-package org-preview-html :ensure t)
 #+end_src
 
 *** Org Auto Tangle
