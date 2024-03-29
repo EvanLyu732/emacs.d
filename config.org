@@ -81,7 +81,7 @@
   - [[#window-manager][Window Manager]]
     - [[#exwm][EXWM]]
   - [[#blog][Blog]]
-    - [[#ox-zola][ox-zola]]
+    - [[#ox-hugo][ox-hugo]]
   - [[#drawing][Drawing]]
     - [[#edraw][EDraw]]
   - [[#pdf][Pdf]]
@@ -1434,18 +1434,14 @@ TODO
 
 
 ** Blog
-TODO
-   * using org-publish for building blog (elisp require)
-   * use this link https://www.reddit.com/r/emacs/comments/ng9hyq/good_tutorials_on_orgpublish/ and this link https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html#org376932a
-   * this link is fun https://diego.codes/post/2019-reading-list/
 
-*** ox-zola
+*** ox-hugo
 
 #+begin_src emacs-lisp
-(use-package ox-zola
-    :ensure t
-    :config
-    (require 'ox-hugo))
+(use-package ox-hugo
+  :ensure t   ;Auto-install the package from Melpa
+  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :after ox)
  #+end_src
 
 ** Drawing 
