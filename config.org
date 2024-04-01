@@ -344,6 +344,7 @@ Switch <CAPS> and <CTRL>
 
 
 
+
 (add-hook 'org-capture-mode-hook 'evil-insert-state)
 
 (elpaca-wait)
@@ -488,8 +489,8 @@ Switch <CAPS> and <CTRL>
    
 *** Org Bullet
 #+begin_src emacs-lisp
-(use-package org-bullets :ensure t :config 
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(use-package org-bullets :ensure t)
+;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
 *** Org Tempo
