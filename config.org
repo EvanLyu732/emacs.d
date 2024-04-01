@@ -25,6 +25,7 @@
   - [[#org-package][Org Package]]
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
     - [[#tables-of-contents][Tables Of Contents]]
+    - [[#org-modern][Org Modern]]
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
     - [[#org-super-agenda][Org Super Agenda]]
@@ -35,6 +36,7 @@
     - [[#org-journal][Org Journal]]
     - [[#org-download][Org Download]]
     - [[#org-pomodoro][Org Pomodoro]]
+    - [[#org-ref][Org Ref]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
     - [[#focus][Focus]]
@@ -186,15 +188,15 @@ Switch <CAPS> and <CTRL>
   (interactive)
   (load-file user-init-file)
   (load-file user-init-file)
-)
+  )
 
 (defun eval-and-append-result ()
   "Evaluate the expression before the point, append the result, and insert a new line with a comment."
   (interactive)
   (let ((result (eval (preceding-sexp))))
     ;; Insert the result as a string
-  (insert (format " ; => %s" result))
-))
+    (insert (format " ; => %s" result))
+    ))
 
 (defun eval-region-and-append-result (start end)
   "Evaluate the region from START to END and append the result as a comment."
@@ -204,7 +206,7 @@ Switch <CAPS> and <CTRL>
     (goto-char end)
     ;; Insert the result as a comment
     (insert (format " ; => %s" result)))
-)
+  )
 #+end_src
 
 
@@ -312,8 +314,8 @@ Switch <CAPS> and <CTRL>
   :demand nil 
   :config
   (setq evil-collection-mode-list
-         '(dashboard dired ibuffer pdf magit neotree vterm)
-  )
+        '(dashboard dired ibuffer pdf magit neotree vterm)
+	)
   (evil-collection-init))
 
 
@@ -448,6 +450,41 @@ Switch <CAPS> and <CTRL>
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
+
+*** Org Modern
+#+begin_src emacs-lisp
+(use-package org-modern
+  :ensure t
+  :config 
+  (add-hook 'org-mode-hook 'global-org-modern-mode)
+
+  (setq
+   ;; Edit settings
+   org-auto-align-tags nil
+   org-tags-column 0
+   org-catch-invisible-edits 'show-and-error
+   org-special-ctrl-a/e t
+   org-insert-heading-respect-content t
+
+   ;; Org styling, hide markup etc.
+   org-hide-emphasis-markers t
+   org-pretty-entities t
+   org-ellipsis "…"
+
+   ;; Agenda styling
+   org-agenda-tags-column 0
+   org-agenda-block-separator ?─
+   org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+   org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────")
+  )
+;; Option 2: Globally
+
+#+end_src
+
    
 *** Org Bullet
 #+begin_src emacs-lisp
@@ -592,11 +629,18 @@ org roam for note-taking
   (:map org-mode-map
         (("s-Y" . org-download-screenshot)
          ("s-y" . org-download-yank))))
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
 #+end_src
 
 *** Org Pomodoro
 #+begin_src emacs-lisp
 (use-package org-pomodoro :ensure t)
+#+end_src
+
+*** Org Ref
+#+begin_src emacs-lisp
+(use-package org-ref :ensure t)
 #+end_src
    
 ** General Config
@@ -637,7 +681,7 @@ TODO all packages keymap using general for configuration
     "h" '(:ignore t :wk "Help")
     "h v" '(describe-variable :wk "Describe Variable")
     "h f" '(describe-function :wk "Describe Function")
-   )
+    )
 
   ;; fast execute M-x
 
@@ -645,18 +689,18 @@ TODO all packages keymap using general for configuration
     "h" '(:ignore t :wk "Help")
     "h v" '(describe-variable :wk "Describe Variable")
     "h f" '(describe-function :wk "Describe Function")
-  )
+    )
 
   (general-def 'normal 'override
     "C-h" 'evil-window-left
     "C-j" 'evil-window-down
     "C-k" 'evil-window-up
     "C-l" 'evil-window-right
-  )
+    )
 
   (general-def 'insert 'override
     "C-b" 'frog-jump-buffer
-  )
+    )
 
   ;; buffer 
   (leader-key
@@ -679,14 +723,14 @@ TODO all packages keymap using general for configuration
   ;; window
   (leader-key
     "w m" '(delete-other-windows :wk "Delete Other Windows")
-   )
+    )
 
   ;; Navigating
   (leader-key
     "g w" '(avy-goto-word-1 :wk "Avy Go To Word")
     "g c" '(avy-goto-char-timer :wk "Avy Go To Char With Timer")
     "g l" '(avy-goto-line :wk "Avy Go To Link")
-   )
+    )
 
   ;; config
   (leader-key
@@ -706,36 +750,36 @@ TODO all packages keymap using general for configuration
     "o d" '(org-deadline  :wk "Add Deadline Timestamp")
     "o p" '(org-open-at-point  :wk "Org Open At Point")
     "o j" '(org-journal-new-entry :wk "New Org Jounral")
-  )
+    )
 
   ;; magit
   (leader-key
     "g g" '(magit :wk "Call Magit")
-  ) 
+    ) 
 
 
   ;; completition
   (leader-key
     "c" '(company-complete :wk "Call Company Completion")
-  ) 
+    ) 
 
 
   ;; file explorer 
   (leader-key
     "e" '(neotree-toggle :wk "Open Neotree")
-   )
+    )
 
 
   ;; projectile
   (leader-key
     "p s" '(projectile-switch-project :wk "Projectile Switch Project")
-  )
+    )
 
   ;; other
   (leader-key
     "z" '(darkroom-mode :wk "Zen Mode")
     )
-)
+  )
 #+end_src
 
 
@@ -1242,7 +1286,7 @@ bug hunter for hunting emacs configuration file
   ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
   ;;;; 5. No project support
   ;; (setq consult-project-function nil)
-)
+  )
 #+end_src
 
 *** Orderless
@@ -1262,23 +1306,23 @@ bug hunter for hunting emacs configuration file
 
 *** Fzf
 
- #+begin_src emacs-lisp
- (use-package fzf
-   :ensure t
-   :bind
-     ;; Don't forget to set keybinds!
-   :config
-   (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
-	 fzf/executable "fzf"
-	 fzf/git-grep-args "-i --line-number %s"
-	 ;; command used for `fzf-grep-*` functions
-	 ;; example usage for ripgrep:
-	 ;; fzf/grep-command "rg --no-heading -nH"
-	 fzf/grep-command "grep -nrH"
-	 ;; If nil, the fzf buffer will appear at the top of the window
-	 fzf/position-bottom t
-	 fzf/window-height 15))
- #+end_src
+#+begin_src emacs-lisp
+(use-package fzf
+  :ensure t
+  :bind
+  ;; Don't forget to set keybinds!
+  :config
+  (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
+	fzf/executable "fzf"
+	fzf/git-grep-args "-i --line-number %s"
+	;; command used for `fzf-grep-*` functions
+	;; example usage for ripgrep:
+	;; fzf/grep-command "rg --no-heading -nH"
+	fzf/grep-command "grep -nrH"
+	;; If nil, the fzf buffer will appear at the top of the window
+	fzf/position-bottom t
+	fzf/window-height 15))
+#+end_src
 
 
 
@@ -1408,17 +1452,17 @@ TODO
   (setq vterm-toggle-scope 'project)
   (add-to-list 'display-buffer-alist
                '((lambda (buffer-or-name _)
-                     (let ((buffer (get-buffer buffer-or-name)))
-                       (with-current-buffer buffer
-                         (or (equal major-mode 'vterm-mode)
-                             (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
-                  (display-buffer-reuse-window display-buffer-at-bottom)
-                  ;;(display-buffer-reuse-window display-buffer-in-direction)
-                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
-                  ;;(direction . bottom)
-                  ;;(dedicated . t) ;dedicated is supported in emacs27
-                  (reusable-frames . visible)
-                  (window-height . 0.4))))
+                   (let ((buffer (get-buffer buffer-or-name)))
+                     (with-current-buffer buffer
+                       (or (equal major-mode 'vterm-mode)
+                           (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 ;;(display-buffer-reuse-window display-buffer-in-direction)
+                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                 ;;(direction . bottom)
+                 ;;(dedicated . t) ;dedicated is supported in emacs27
+                 (reusable-frames . visible)
+                 (window-height . 0.4))))
 
 #+end_src
 
@@ -1442,7 +1486,7 @@ TODO
   :ensure t   ;Auto-install the package from Melpa
   :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
   :after ox)
- #+end_src
+#+end_src
 
 ** Drawing 
 
@@ -1468,18 +1512,18 @@ TODO
               ("/" . pdf-isearch-occur)
               ("C-=" . pdf-view-enlarge)
               ("C--" . pdf-view-shrink))
-              ("C-f" . pdf-view-next-page)
-              ("C-b" . pdf-view-last-page)
-              ("C-s" . switch-to-buffer)
-              ("C-e" . neotree-toggle)
+  ("C-f" . pdf-view-next-page)
+  ("C-b" . pdf-view-last-page)
+  ("C-s" . switch-to-buffer)
+  ("C-e" . neotree-toggle)
   :init (pdf-loader-install)
   :config
   ;; (evil-set-initial-state 'pdf-view-mode 'normal)
   (add-to-list 'revert-without-query ".pdf")
   (add-hook 'pdf-view-mode-hook #'(lambda () (interactive)         (display-line-numbers-mode -1)
-                                  (blink-cursor-mode -1)
-                                  (doom-modeline-mode -1)))
-)
+                                    (blink-cursor-mode -1)
+                                    (doom-modeline-mode -1)))
+  )
 
 
 
@@ -1500,4 +1544,6 @@ TODO
   :ensure t
 )
 #+end_src
+
+
 
