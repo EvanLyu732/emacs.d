@@ -95,6 +95,7 @@
   - [[#hacker-news][Hacker News]]
   - [[#epmv][EPMV]]
   - [[#elfeed][Elfeed]]
+  - [[#nov][Nov]]
 
 * Basic Setting 
 
@@ -308,7 +309,7 @@
   :demand nil 
   :config
   (setq evil-collection-mode-list
-        '(dashboard dired ibuffer pdf magit neotree vterm elfeed)
+        '(dashboard dired ibuffer pdf magit neotree vterm elfeed nov)
 	)
   (evil-collection-init))
 
@@ -761,6 +762,7 @@ TODO all packages keymap using general for configuration
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit emacs config") "f r" '(counsel-recentf :wk "Find recent files")
     "f a" '((lambda () (interactive) (find-file "~/Org/agenda.org")) :wk "Open My Agneda") "f r" '(counsel-recentf :wk "Find recent files")
     "f p" '((lambda () (interactive) (find-file "~/Org/project.org")) :wk "Open My Projects") "f r" '(counsel-recentf :wk "Find recent files")
+    "f i" '((lambda () (interactive) (find-file "~/Org/idea.org")) :wk "Open Idea.Org") "f r" '(counsel-recentf :wk "Find recent files")
     "f r" '(reload-init-file :wk "Reload Config")
     )
 
@@ -1588,3 +1590,21 @@ TODO
 )
 (run-at-time nil (* 8 60 60) #'elfeed-update)
 #+end_src
+
+** Nov
+Nov for epub reader
+#+begin_src emacs-lisp
+;; (elpaca (nov-xwidget :host github :repo "chenyanming/nov-xwidget"))
+;; (elpaca-wait)
+(use-package nov :ensure t)
+;; (use-package nov-xwidget
+;;   :ensure t
+;;   :demand t
+;;   :after nov
+;;   :config
+
+;; ;; (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
+;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+#+end_src
+
+
