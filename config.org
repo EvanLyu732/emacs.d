@@ -8,7 +8,6 @@
 * Table Of Content :TOC_3:
 - [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
-  - [[#rebind-key][Rebind Key]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
 - [[#custom-function][Custom Function]]
@@ -26,6 +25,7 @@
     - [[#org-mode-basic-settings][Org Mode Basic Settings]]
     - [[#tables-of-contents][Tables Of Contents]]
     - [[#org-modern][Org Modern]]
+    - [[#org-appear][Org Appear]]
     - [[#org-bullet][Org Bullet]]
     - [[#org-tempo][Org Tempo]]
     - [[#org-super-agenda][Org Super Agenda]]
@@ -37,6 +37,8 @@
     - [[#org-download][Org Download]]
     - [[#org-pomodoro][Org Pomodoro]]
     - [[#org-ref][Org Ref]]
+    - [[#org-noter][Org Noter]]
+    - [[#org-web-tools][Org Web Tools]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
     - [[#focus][Focus]]
@@ -90,6 +92,9 @@
     - [[#pdf-tools][Pdf Tools]]
     - [[#pdf-view-restore][Pdf View Restore]]
   - [[#keycast][KeyCast]]
+  - [[#hacker-news][Hacker News]]
+  - [[#epmv][EPMV]]
+  - [[#elfeed][Elfeed]]
 
 * Basic Setting 
 
@@ -124,18 +129,6 @@
 
 ;; dired auto refresh 
 (add-hook 'dired-mode-hook 'auto-revert-mode)
-#+end_src
-
-** Rebind Key 
-
-Switch <CAPS> and <CTRL>
-
-#+begin_src emacs-lisp
-
-;; linux 
-
-;; macos
-
 #+end_src
 
 ** Font
@@ -308,13 +301,14 @@ Switch <CAPS> and <CTRL>
   (setq x-select-enable-clipboard nil)
   )
 
+
 (use-package evil-collection
   :after evil
   :ensure t
   :demand nil 
   :config
   (setq evil-collection-mode-list
-        '(dashboard dired ibuffer pdf magit neotree vterm)
+        '(dashboard dired ibuffer pdf magit neotree vterm elfeed)
 	)
   (evil-collection-init))
 
@@ -486,6 +480,24 @@ Switch <CAPS> and <CTRL>
 
 #+end_src
 
+*** Org Appear
+#+begin_src emacs-lisp
+(use-package org-appear
+  :ensure t
+  :config 
+  (add-hook 'org-mode-hook 'org-appear-mode)
+  (setq org-appear-trigger 'manual)
+  (add-hook 'org-mode-hook (lambda ()
+                           (add-hook 'evil-insert-state-entry-hook
+                                     #'org-appear-manual-start
+                                     nil
+                                     t)
+                           (add-hook 'evil-insert-state-exit-hook
+                                     #'org-appear-manual-stop
+                                     nil
+                                     t)))
+)
+#+end_src
    
 *** Org Bullet
 #+begin_src emacs-lisp
@@ -643,6 +655,16 @@ org roam for note-taking
 #+begin_src emacs-lisp
 (use-package org-ref :ensure t)
 #+end_src
+
+*** Org Noter
+#+begin_src emacs-lisp
+(use-package org-noter :ensure t)
+#+end_src
+
+*** Org Web Tools
+#+begin_src emacs-lisp
+(use-package org-web-tools :ensure t)
+#+end_src
    
 ** General Config
 
@@ -697,11 +719,11 @@ TODO all packages keymap using general for configuration
     "C-j" 'evil-window-down
     "C-k" 'evil-window-up
     "C-l" 'evil-window-right
-    )
+   )
 
   (general-def 'insert 'override
     "C-b" 'frog-jump-buffer
-    )
+   )
 
   ;; buffer 
   (leader-key
@@ -1512,11 +1534,11 @@ TODO
               ("K" . pdf-view-last-page) 
               ("/" . pdf-isearch-occur)
               ("C-=" . pdf-view-enlarge)
-              ("C--" . pdf-view-shrink))
-  ("C-f" . pdf-view-next-page)
-  ("C-b" . pdf-view-last-page)
-  ("C-s" . switch-to-buffer)
-  ("C-e" . neotree-toggle)
+              ("C--" . pdf-view-shrink)
+              ("C-f" . pdf-view-next-page)
+              ("C-b" . pdf-view-last-page)
+              ("C-s" . switch-to-buffer)
+              ("C-e" . neotree-toggle))
   :init (pdf-loader-install)
   :config
   ;; (evil-set-initial-state 'pdf-view-mode 'normal)
@@ -1524,9 +1546,7 @@ TODO
   (add-hook 'pdf-view-mode-hook #'(lambda () (interactive)         (display-line-numbers-mode -1)
                                     (blink-cursor-mode -1)
                                     (doom-modeline-mode -1)))
-  )
-
-
+ )
 
 #+end_src
 
@@ -1546,5 +1566,25 @@ TODO
 )
 #+end_src
 
+** Hacker News
+#+begin_src emacs-lisp
+(use-package hackernews :ensure t)
+#+end_src
 
 
+** EPMV
+#+begin_src emacs-lisp
+(use-package empv :ensure t)
+#+end_src
+
+** Elfeed
+#+begin_src emacs-lisp
+(use-package elfeed :ensure t)
+(use-package elfeed-org
+  :ensure t
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/Org/elfeed.org"))
+)
+(run-at-time nil (* 8 60 60) #'elfeed-update)
+#+end_src
