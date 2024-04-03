@@ -724,6 +724,7 @@ TODO all packages keymap using general for configuration
     "C-j" 'evil-window-down
     "C-k" 'evil-window-up
     "C-l" 'evil-window-right
+    "m" 'delete-other-windows
    )
 
   (general-def 'insert 'override
