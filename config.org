@@ -5,7 +5,8 @@
 #+STARTUP: showeverything
 #+OPTIONS: tocs:3
 
-* Table Of Content :TOC_3: - [[#basic-setting][Basic Setting]]
+* Table Of Content :TOC_3:
+- [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
