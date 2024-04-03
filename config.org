@@ -5,8 +5,7 @@
 #+STARTUP: showeverything
 #+OPTIONS: tocs:3
 
-* Table Of Content :TOC_3:
-- [[#basic-setting][Basic Setting]]
+* Table Of Content :TOC_3: - [[#basic-setting][Basic Setting]]
   - [[#basic-config][Basic Config]]
   - [[#font][Font]]
   - [[#zoom-inout][Zoom In/Out]]
@@ -118,6 +117,12 @@
 (global-auto-revert-mode t)
 
 ;; line number mode
+(require 'display-line-numbers)
+
+(defun display-line-numbers--turn-on ()
+  "Turn on display-line-numbers-mode."
+  (unless (or (minibufferp) (eq major-mode 'pdf-view-mode))
+    (display-line-numbers-mode)))
 (global-display-line-numbers-mode 1)
 (global-visual-line-mode t)
 
@@ -125,7 +130,7 @@
 (setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
 
 ;; auto pair
-;; (electric-pair-mode t)
+(electric-pair-mode t)
 
 
 ;; dired auto refresh 
@@ -310,7 +315,7 @@
   :config
   (setq evil-collection-mode-list
         '(dashboard dired ibuffer pdf magit neotree vterm elfeed nov)
-	)
+  )
   (evil-collection-init))
 
 
@@ -335,9 +340,7 @@
   :config
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys)
-  )
-
-
+)
 
 
 (add-hook 'org-capture-mode-hook 'evil-insert-state)
@@ -726,7 +729,6 @@ TODO all packages keymap using general for configuration
     "C-b" 'frog-jump-buffer
    )
 
-  ;; buffer 
   (leader-key
     "b" '(:ignore t :wk "Bookmarks/Buffers")
     "b s" '(switch-to-buffer :wk "Switch to buffer")
@@ -735,14 +737,8 @@ TODO all packages keymap using general for configuration
     ;; "b d" '(bookmark-delete :wk "Delete bookmark")
     "b i" '(ibuffer :wk "Ibuffer")
     "b k" '(kill-current-buffer :wk "Kill current buffer")
-    "b K" '(kill-some-buffers :wk "Kill multiple buffers")
-    "b l" '(list-bookmarks :wk "List bookmarks")
-    ;; "b m" '(bookmark-set :wk "Set bookmark")
-    "b n" '(next-buffer :wk "Next buffer")
-    "b p" '(previous-buffer :wk "Previous buffer")
-    "b r" '(revert-buffer :wk "Reload buffer")
-    "b R" '(rename-buffer :wk "Rename buffer")
-    )
+   )
+  
 
   ;; window
   (leader-key
@@ -804,7 +800,7 @@ TODO all packages keymap using general for configuration
   (leader-key
     "z" '(darkroom-mode :wk "Zen Mode")
     )
-  )
+)
 #+end_src
 
 
@@ -1538,18 +1534,17 @@ TODO
               ("C-=" . pdf-view-enlarge)
               ("C--" . pdf-view-shrink)
               ("C-f" . pdf-view-next-page)
-              ("C-b" . pdf-view-last-page)
+              ("C-b" . pdf-view-previous-page)
               ("C-s" . switch-to-buffer)
+              ("m" . delete-other-windows)
               ("C-e" . neotree-toggle))
   :init (pdf-loader-install)
   :config
   ;; (evil-set-initial-state 'pdf-view-mode 'normal)
   (add-to-list 'revert-without-query ".pdf")
-  (add-hook 'pdf-view-mode-hook #'(lambda () (interactive)         (display-line-numbers-mode -1)
-                                    (blink-cursor-mode -1)
-                                    (doom-modeline-mode -1)))
- )
+  (add-hook 'pdf-view-mode-hook #'(lambda () (interactive) (global-display-line-numbers-mode -1)  (display-line-numbers-mode -1) (blink-cursor-mode -1) (doom-modeline-mode -1))))
 
+;; (add-to-list 'pdf-view-incompatible-modes 'display-line-numbers-mode)
 #+end_src
 
 *** Pdf View Restore
@@ -1589,6 +1584,46 @@ TODO
   (setq rmh-elfeed-org-files (list "~/Org/elfeed.org"))
 )
 (run-at-time nil (* 8 60 60) #'elfeed-update)
+
+(setq elfeed-show-entry-switch #'elfeed-display-buffer)
+
+(defun elfeed-display-buffer (buf &optional act)
+  (pop-to-buffer buf)
+  (set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
+
+(defun elfeed-show-eww-open (&optional use-generic-p)
+  "open with eww"
+  (interactive "P")
+  (let ((browse-url-browser-function #'eww-browse-url))
+    (elfeed-show-visit use-generic-p)))
+
+(defun elfeed-search-eww-open (&optional use-generic-p)
+  "open with eww"
+  (interactive "P")
+  (let ((browse-url-browser-function #'eww-browse-url))
+    (elfeed-search-browse-url use-generic-p)))
+
+(defvar arxiv-paper-path "~/Documents/Paper/")
+
+(defun arxiv-download-and-open ()
+  "Download and open the PDF file for the ArXiv URL at point."
+  (interactive)
+  (let* ((url (thing-at-point 'url t))
+         (arxiv-url-p (string-match "^https?://arxiv.org/abs/\\([0-9]+\.[0-9]+\\)" url))
+         (arxiv-id (match-string 1 url)))
+    (if arxiv-url-p
+        (let* ((pdf-url (format "https://arxiv.org/pdf/%s.pdf" arxiv-id))
+               (pdf-buffer (get-buffer-create (format "*ArXiv PDF: %s*" arxiv-id)))
+               (pdf-file (expand-file-name (format "%s.pdf" arxiv-id)  arxiv-paper-path)))
+          (url-copy-file pdf-url pdf-file t)
+	  (message "load pdf url: %s, pdf-file: %s, pdf-buffer: %s" pdf-url pdf-file pdf-buffer)
+	  (switch-to-buffer pdf-buffer)
+          (with-current-buffer pdf-buffer
+            (insert-file-contents pdf-file)
+            (pdf-view-mode)
+            (display-buffer pdf-buffer))
+          (message "Downloaded and opened PDF for %s" arxiv-id))
+      (message "No ArXiv URL at point"))))
 #+end_src
 
 ** Nov
