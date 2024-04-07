@@ -1539,6 +1539,7 @@ TODO
               ("C-b" . pdf-view-previous-page)
               ("C-s" . switch-to-buffer)
               ("m" . delete-other-windows)
+              ("x" . kill-current-buffer)
               ("C-e" . neotree-toggle))
   :init (pdf-loader-install)
   :config
@@ -1626,6 +1627,19 @@ TODO
             (display-buffer pdf-buffer))
           (message "Downloaded and opened PDF for %s" arxiv-id))
       (message "No ArXiv URL at point"))))
+
+(add-to-list 'evil-motion-state-modes 'elfeed-search-mode)
+(add-to-list 'evil-motion-state-modes 'elfeed-show-mode)
+
+(evil-define-key* 'motion elfeed-search-mode-map
+                  "gb" #'elfeed-search-browse-url
+                  "gr" #'elfeed-search-update--force
+                  "gR" #'elfeed-search-fetch)
+
+(evil-define-key* 'motion elfeed-show-mode-map
+                  "gb" #'elfeed-show-visit
+                  "gj" #'elfeed-show-next
+                  "gk" #'elfeed-show-prev)
 #+end_src
 
 ** Nov
@@ -1634,6 +1648,9 @@ Nov for epub reader
 ;; (elpaca (nov-xwidget :host github :repo "chenyanming/nov-xwidget"))
 ;; (elpaca-wait)
 (use-package nov :ensure t)
+(add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1) (darkroom-mode 1)))
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
 ;; (use-package nov-xwidget
 ;;   :ensure t
 ;;   :demand t
