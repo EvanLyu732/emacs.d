@@ -39,6 +39,7 @@
     - [[#org-ref][Org Ref]]
     - [[#org-noter][Org Noter]]
     - [[#org-web-tools][Org Web Tools]]
+    - [[#org-fragtog][Org FragTog]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
     - [[#focus][Focus]]
@@ -670,6 +671,12 @@ org roam for note-taking
 #+begin_src emacs-lisp
 (use-package org-web-tools :ensure t)
 #+end_src
+
+*** Org FragTog 
+#+begin_src emacs-lisp
+(use-package org-fragtog :ensure t)
+(add-hook 'org-mode-hook 'org-fragtog-mode)
+#+end_src>
    
 ** General Config
 
@@ -736,8 +743,9 @@ TODO all packages keymap using general for configuration
     "b s" '(switch-to-buffer :wk "Switch to buffer")
     "b c" '(clone-indirect-buffer :wk "Create indirect buffer copy in a split")
     "b C" '(clone-indirect-buffer-other-window :wk "Clone indirect buffer in new window")
-    ;; "b d" '(bookmark-delete :wk "Delete bookmark")
     "b i" '(ibuffer :wk "Ibuffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
     "b k" '(kill-current-buffer :wk "Kill current buffer")
    )
   
@@ -1518,6 +1526,7 @@ TODO
 #+begin_src emacs-lisp
 #+end_src
 
+
 ** Pdf
 *** Pdf Tools
 #+begin_src emacs-lisp
@@ -1540,6 +1549,7 @@ TODO
               ("C-s" . switch-to-buffer)
               ("m" . delete-other-windows)
               ("x" . kill-current-buffer)
+              ("p" . previous-buffer)
               ("C-e" . neotree-toggle))
   :init (pdf-loader-install)
   :config
@@ -1631,15 +1641,15 @@ TODO
 (add-to-list 'evil-motion-state-modes 'elfeed-search-mode)
 (add-to-list 'evil-motion-state-modes 'elfeed-show-mode)
 
-(evil-define-key* 'motion elfeed-search-mode-map
-                  "gb" #'elfeed-search-browse-url
-                  "gr" #'elfeed-search-update--force
-                  "gR" #'elfeed-search-fetch)
+;; (evil-define-key* 'motion elfeed-search-mode-map
+;;                   "gb" #'elfeed-search-browse-url
+;;                   "gr" #'elfeed-search-update--force
+;;                   "gR" #'elfeed-search-fetch)
 
-(evil-define-key* 'motion elfeed-show-mode-map
-                  "gb" #'elfeed-show-visit
-                  "gj" #'elfeed-show-next
-                  "gk" #'elfeed-show-prev)
+;; (evil-define-key* 'motion elfeed-show-mode-map
+;;                   "gb" #'elfeed-show-visit
+;;                   "gj" #'elfeed-show-next
+;;                   "gk" #'elfeed-show-prev)
 #+end_src
 
 ** Nov
