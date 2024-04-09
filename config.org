@@ -47,6 +47,7 @@
     - [[#darkroom][DarkRoom]]
   - [[#indentation][Indentation]]
     - [[#aggressive-indent][aggressive-indent]]
+  - [[#auto-pair][Auto Pair]]
   - [[#jumping][Jumping]]
     - [[#avy][Avy]]
   - [[#magit][Magit]]
@@ -79,6 +80,7 @@
     - [[#eglot][Eglot]]
     - [[#eldoc][Eldoc]]
     - [[#snippets][Snippets]]
+    - [[#elisp][Elisp]]
     - [[#debug][Debug]]
   - [[#terminal][Terminal]]
     - [[#vterm][VTerm]]
@@ -130,7 +132,7 @@
 (setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
 
 ;; auto pair
-(electric-pair-mode t)
+(electric-pair-mode nil)
 
 
 ;; dired auto refresh 
@@ -354,7 +356,10 @@
 (use-package perspective
   :ensure t
   :init
-  (persp-mode))
+  (persp-mode)
+  :config
+  ;; (persp-suppress-no-prefix-key-warning t)
+)
 #+end_src
 
 ** Buffer Managment 
@@ -853,6 +858,17 @@ DarkRoom for Zen Mode
 						   ))
   (global-aggressive-indent-mode 1)
   )
+#+end_src
+
+** Auto Pair
+#+begin_src emacs-lisp
+
+(use-package smartparens-mode
+  :ensure smartparens  ;; install the package
+  :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config))
 #+end_src
 
 ** Jumping
@@ -1457,6 +1473,18 @@ Eglot for Lsp
   :ensure t
   :after tempel
   )
+
+#+end_src
+
+
+*** Elisp 
+#+begin_src emacs-lisp
+(use-package elisp-slime-nav :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
+)
+
+
 
 #+end_src
 
