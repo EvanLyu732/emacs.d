@@ -17,6 +17,7 @@
   - [[#evil-mode][Evil Mode]]
   - [[#workspace-managment][Workspace Managment]]
     - [[#perspective][Perspective]]
+    - [[#dired][Dired]]
   - [[#buffer-managment][Buffer Managment]]
     - [[#frog-jump-buffer][Frog Jump Buffer]]
   - [[#theme][Theme]]
@@ -357,9 +358,13 @@
   :ensure t
   :init
   (persp-mode)
-  :config
-  ;; (persp-suppress-no-prefix-key-warning t)
 )
+(setq persp-suppress-no-prefix-key-warning t)
+#+end_src
+
+*** Dired 
+#+begin_src emacs-lisp
+(setq dired-dwim-target t)
 #+end_src
 
 ** Buffer Managment 
@@ -612,7 +617,8 @@ org roam for note-taking
 *** Org Journal
 #+begin_src emacs-lisp
 (use-package org-journal
-  :ensure t
+  :ensure
+t
   :bind
   ("C-c n j" . org-journal-new-entry)
   :custom
@@ -792,6 +798,7 @@ TODO all packages keymap using general for configuration
     "p n" '(persp-next  :wk "Perspective next")
     "p p" '(persp-prev  :wk "Perspective previous")
     "p c" '(persp-switch  :wk "Perspective switch")
+    "p r" '(persp-rename  :wk "Rename Perspective")
   ) 
 
 
@@ -1411,7 +1418,7 @@ Eglot for Lsp
 
   (add-hook 'c-ts-mode-hook 'eglot-ensure)
   (add-hook 'c++-ts-mode-hook 'eglot-ensure)
-  )
+)
 
 (setq eglot-stay-out-of '(flymake))
 
@@ -1484,7 +1491,13 @@ Eglot for Lsp
   (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 )
 
-
+(use-package paredit :ensure t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 
 #+end_src
 
@@ -1569,7 +1582,7 @@ TODO
               ("C--" . pdf-view-shrink)
               ("C-f" . pdf-view-next-page)
               ("C-b" . pdf-view-previous-page)
-              ("C-s" . switch-to-buffer)
+              ("C-b" . switch-to-buffer)
               ("m" . delete-other-windows)
               ("x" . kill-current-buffer)
               ("p" . previous-buffer)
