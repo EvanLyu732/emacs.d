@@ -41,6 +41,7 @@
     - [[#org-noter][Org Noter]]
     - [[#org-web-tools][Org Web Tools]]
     - [[#org-fragtog][Org FragTog]]
+  - [[#latex][Latex]]
   - [[#general-config][General Config]]
   - [[#focus-mode][Focus Mode]]
     - [[#focus][Focus]]
@@ -114,6 +115,7 @@
 (global-hl-line-mode t)
 
 ;; show line number
+
 (line-number-mode t)
 
 ;; auto refresh when configure is updated
@@ -404,6 +406,8 @@
 *** Org Mode Basic Settings
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-indent-mode)
+;; Increase line spacing
+(setq-default line-spacing 2)
 
 (setq org-todo-keywords
       '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
@@ -679,10 +683,27 @@ t
 
 *** Org FragTog 
 #+begin_src emacs-lisp
-(use-package org-fragtog :ensure t)
-(add-hook 'org-mode-hook 'org-fragtog-mode)
+(use-package org-fragtog
+:ensure t
+:after org
+:custom
+(org-startup-with-latex-preview t)
+:hook
+(org-mode . org-fragtog-mode)
+:custom
+(org-format-latex-options
+    (plist-put org-format-latex-options :scale 5)
+    (plist-put org-format-latex-options :foreground 'auto)
+    (plist-put org-format-latex-options :background 'auto)))
+
 #+end_src>
    
+
+** Latex
+#+begin_src emacs-lisp
+;;(setq org-format-latex-options (plist-put org-format-latex-options :scale 2:0.0))
+#+end_src>
+
 ** General Config
 
 TODO all packages keymap using general for configuration
