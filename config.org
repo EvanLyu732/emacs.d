@@ -83,6 +83,7 @@
     - [[#eldoc][Eldoc]]
     - [[#snippets][Snippets]]
     - [[#elisp][Elisp]]
+    - [[#common-lisp][Common Lisp]]
     - [[#debug][Debug]]
   - [[#terminal][Terminal]]
     - [[#vterm][VTerm]]
@@ -1043,7 +1044,7 @@ bug hunter for hunting emacs configuration file
   (setq dashboard-set-file-icons t)
   (setq dashboard-banner-logo-title "emacs rocks")
   (setq dashboard-startup-banner 'logo)
-  (setq dashboard-center-content nil)
+  (setq dashboard-center-content t)
   (setq dashboard-icon-type 'all-the-icons)
   (setq dashboard-week-agenda t)
   (setq dashboard-projects-backend 'projectile)
@@ -1523,6 +1524,11 @@ Eglot for Lsp
 #+end_src
 
 
+*** Common Lisp
+#+begin_src emacs-lisp
+(use-package sly :ensure t)
+#+end_src
+
 *** Debug
 TODO 
 #+BEGIN_SRC emacs-lisp
@@ -1704,9 +1710,8 @@ TODO
 ;;                   "gR" #'elfeed-search-fetch)
 
 ;; (evil-define-key* 'motion elfeed-show-mode-map
-;;                   "gb" #'elfeed-show-visit
-;;                   "gj" #'elfeed-show-next
-;;                   "gk" #'elfeed-show-prev)
+;;                   "gl" #'elfeed-show-eww-open
+;; )
 #+end_src
 
 ** Nov
@@ -1726,6 +1731,33 @@ Nov for epub reader
 
 ;; ;; (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
 ;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+(use-package justify-kp :ensure t)
+(setq nov-text-width t)
+
+(defun my-nov-window-configuration-change-hook ()
+  (my-nov-post-html-render-hook)
+  (remove-hook 'window-configuration-change-hook
+               'my-nov-window-configuration-change-hook
+               t))
+
+(defun my-nov-post-html-render-hook ()
+  (if (get-buffer-window)
+      (let ((max-width (pj-line-width))
+            buffer-read-only)
+        (save-excursion
+          (goto-char (point-min))
+          (while (not (eobp))
+            (when (not (looking-at "^[[:space:]]*$"))
+              (goto-char (line-end-position))
+              (when (> (shr-pixel-column) max-width)
+                (goto-char (line-beginning-position))
+                (pj-justify)))
+            (forward-line 1))))
+    (add-hook 'window-configuration-change-hook
+              'my-nov-window-configuration-change-hook
+              nil t)))
+
+(add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook)
 #+end_src
 
 
