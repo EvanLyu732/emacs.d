@@ -80,7 +80,6 @@
   - [[#development][Development]]
     - [[#treesitter][Treesitter]]
     - [[#eglot][Eglot]]
-    - [[#eldoc][Eldoc]]
     - [[#snippets][Snippets]]
     - [[#elisp][Elisp]]
     - [[#common-lisp][Common Lisp]]
@@ -100,6 +99,8 @@
   - [[#epmv][EPMV]]
   - [[#elfeed][Elfeed]]
   - [[#nov][Nov]]
+  - [[#ztree][Ztree]]
+  - [[#simpleclip][SimpleClip]]
 
 * Basic Setting 
 
@@ -304,7 +305,6 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-vsplit-window-right t)
-
   (setq evil-split-window-below t)
   :ensure t
   :demand nil
@@ -827,7 +827,7 @@ TODO all packages keymap using general for configuration
   ;; completition
   (leader-key
     "c" '(company-complete :wk "Call Company Completion")
-   ) 
+  ) 
 
 
   ;; file explorer 
@@ -835,6 +835,11 @@ TODO all packages keymap using general for configuration
     "e" '(neotree-toggle :wk "Open Neotree")
   )
 
+
+  ;; Embark
+  (leader-key
+    "a" '(embark-act :wk "Embark Act")
+  )
 
   ;; projectile
   (leader-key
@@ -1148,6 +1153,7 @@ bug hunter for hunting emacs configuration file
   )
 
 (setq completion-ignore-case  t)
+
 ;; With use-package:
 
 (use-package company-box
@@ -1161,7 +1167,7 @@ bug hunter for hunting emacs configuration file
   :after company
   :init
   (company-quickhelp-mode)
-  )
+)
 #+end_src
 
 *** Caps
@@ -1423,39 +1429,24 @@ bug hunter for hunting emacs configuration file
 Eglot for Lsp
 
 #+begin_src emacs-lisp
-;; 下面的代码是使用 use-package 配置 eglot 的过程
 (use-package eglot
   :ensure nil
   :demand nil
-  :hook (prog-mode . eglot-ensure)
-  :config
-  ;; 给 c-mode, c++-mode 配置使用 clangd-11 作为 LSP 后端
-  ;; 需要主要的是，要根据上面你安装的 clangd 程序的名字填写这个配置
-  ;; 我这里写成 clangd-11 是因为安装的 clangd 程序的名字为 clangd-11
-  (add-to-list 'eglot-server-programs '((c-mode c++-mode c-ts-mode c++-ts-mode) "clangd-15"))
-  ;; 使用 c-mode 是，开启 eglot
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  ;; 使用 c++-mode 是，开启 eglot
-  (add-hook 'c++-mode-hook 'eglot-ensure)
-
-  (add-hook 'c-ts-mode-hook 'eglot-ensure)
-  (add-hook 'c++-ts-mode-hook 'eglot-ensure)
+  :hook
+    (prog-mode . eglot-ensure)
+    (c-ts-mode . eglot-ensure)
+    (c++-ts-mode . eglot-ensure)
+    (cmake-ts-mode . eglot-ensure)
 )
 
 (setq eglot-stay-out-of '(flymake))
 
-#+end_src
-
-*** Eldoc
-#+begin_src emacs-lisp
-(require 'eldoc)
-(setq global-eldoc-mode t)
-
-;; (use-package eldoc
-;;   :ensure t
-;;   :after company
-;;   :init
-;;   (global-eldoc-mode))
+(use-package eldoc
+  :ensure t
+  :after eglot
+  :init
+  (global-eldoc-mode)
+)
 #+end_src
 
 
@@ -1501,7 +1492,7 @@ Eglot for Lsp
 (use-package tempel-collection
   :ensure t
   :after tempel
-  )
+)
 
 #+end_src
 
@@ -1723,41 +1714,28 @@ Nov for epub reader
 (add-hook 'nov-mode-hook (lambda () (display-line-numbers-mode -1) (darkroom-mode 1)))
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
-;; (use-package nov-xwidget
-;;   :ensure t
-;;   :demand t
-;;   :after nov
-;;   :config
-
-;; ;; (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
-;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
-(use-package justify-kp :ensure t)
 (setq nov-text-width t)
 
-(defun my-nov-window-configuration-change-hook ()
-  (my-nov-post-html-render-hook)
-  (remove-hook 'window-configuration-change-hook
-               'my-nov-window-configuration-change-hook
-               t))
-
-(defun my-nov-post-html-render-hook ()
-  (if (get-buffer-window)
-      (let ((max-width (pj-line-width))
-            buffer-read-only)
-        (save-excursion
-          (goto-char (point-min))
-          (while (not (eobp))
-            (when (not (looking-at "^[[:space:]]*$"))
-              (goto-char (line-end-position))
-              (when (> (shr-pixel-column) max-width)
-                (goto-char (line-beginning-position))
-                (pj-justify)))
-            (forward-line 1))))
-    (add-hook 'window-configuration-change-hook
-              'my-nov-window-configuration-change-hook
-              nil t)))
-
-(add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook)
+;; TODO: beautiful nov mode; (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook)
 #+end_src
 
 
+** Ztree 
+
+#+begin_src emacs-lisp
+(use-package ztree :ensure t)
+#+end_src
+
+
+
+** SimpleClip
+#+begin_src emacs-lisp
+(use-package simpleclip
+   :ensure t
+   :init
+   (simpleclip-mode 1)
+)
+#+end_src
+
+
+*
