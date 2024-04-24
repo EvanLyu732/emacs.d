@@ -101,6 +101,7 @@
   - [[#nov][Nov]]
   - [[#ztree][Ztree]]
   - [[#simpleclip][SimpleClip]]
+  - [[#gptel][GPTEL]]
 
 * Basic Setting 
 
@@ -1703,6 +1704,13 @@ TODO
 ;; (evil-define-key* 'motion elfeed-show-mode-map
 ;;                   "gl" #'elfeed-show-eww-open
 ;; )
+
+(use-package elfeed-score
+  :ensure t
+  :config
+  (progn
+    (elfeed-score-enable)
+    (define-key elfeed-search-mode-map "=" elfeed-score-map)))
 #+end_src
 
 ** Nov
@@ -1738,4 +1746,9 @@ Nov for epub reader
 #+end_src
 
 
-*
+** GPTEL
+#+begin_src emacs-lisp
+(use-package gptel :ensure t)
+#+end_src
+
+
