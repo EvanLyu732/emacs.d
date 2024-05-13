@@ -83,6 +83,7 @@
     - [[#eglot][Eglot]]
     - [[#snippets][Snippets]]
     - [[#elisp][Elisp]]
+    - [[#markdown][Markdown]]
     - [[#python][Python]]
     - [[#common-lisp][Common Lisp]]
     - [[#debug][Debug]]
@@ -103,7 +104,7 @@
   - [[#nov][Nov]]
   - [[#ztree][Ztree]]
   - [[#simpleclip][SimpleClip]]
-  - [[#gptel][GPTEL]]
+  - [[#chatgpt-shell][ChatGpt-Shell]]
 
 * Basic Setting 
 
@@ -1456,12 +1457,12 @@ Eglot for Lsp
 
 (setq eglot-stay-out-of '(flymake))
 
-(use-package eldoc
-  :ensure t
-  :after eglot
-  :init
-  (global-eldoc-mode)
-)
+;; (use-package eldoc
+;;   :ensure t
+;;   :after eglot
+;;   :init
+;;   (global-eldoc-mode)
+;; )
 #+end_src
 
 
@@ -1527,6 +1528,16 @@ Eglot for Lsp
 ;; (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
 ;; (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 
+#+end_src
+
+*** Markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init
+  (setq markdown-command "multimarkdown")
+)
 #+end_src
 
 *** Python
@@ -1765,9 +1776,18 @@ Nov for epub reader
 #+end_src
 
 
-** GPTEL
+** ChatGpt-Shell
 #+begin_src emacs-lisp
-(use-package gptel :ensure t)
+(use-package chatgpt-shell
+  :ensure t
+  :custom
+  ((chatgpt-shell-openai-key
+    (lambda ()
+      (auth-source-pass-get 'secret "openai-key"))))
+  
+)
+
+(setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
 #+end_src
 
 
